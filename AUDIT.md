@@ -1,56 +1,57 @@
 ﻿# PyGhidra Audit: C++ vs Python Method Coverage
 
 **Updated: 2026-03-05**
-**35 core C++ header files | 3251 C++ methods | 4815 Python methods | 148% overall coverage**
+**35 core C++ header files | 3251 C++ methods | 2712 Python own methods | 83% overall coverage**
 **23/23 tests passing | .gitignore added**
+**Note: Python count uses vars(cls) — only methods defined directly on each class, not inherited.**
 
 ## Coverage Table
 
 | C++ Header | Python Module | C++ | Python | % | Status |
 |---|---|---|---|---|---|
-| printc.hh | ghidra.output.printc | 176 | 288 | ✅100% | Done |
-| prettyprint.hh | ghidra.output.prettyprint | 108 | 174 | ✅100% | Done |
-| block.hh | ghidra.block.block | 210 | 1151 | ✅100% | Done |
-| cast.hh | ghidra.types.cast | 21 | 55 | ✅100% | Done |
-| database.hh | ghidra.database.database | 159 | 274 | ✅100% | Done |
-| graph.hh | ghidra.analysis.graph | 3 | 27 | ✅100% | Done |
-| options.hh | ghidra.arch.options | 47 | 125 | ✅100% | Done |
-| override.hh | ghidra.arch.override | 22 | 26 | ✅100% | Done |
-| cover.hh | ghidra.ir.cover | 30 | 30 | ✅100% | Done |
-| userop.hh | ghidra.arch.userop | 52 | 163 | ✅100% | Done |
-| op.hh | ghidra.ir.op | 127 | 180 | ✅100% | Done |
-| typeop.hh | ghidra.ir.typeop | 110 | 140 | ✅100% | Done |
-| loadimage.hh | ghidra.arch.loadimage | 18 | 34 | ✅100% | Done |
-| varnode.hh | ghidra.ir.varnode | 176 | 242 | ✅100% | Done |
-| architecture.hh | ghidra.arch.architecture | 83 | 89 | ✅100% | Done |
-| jumptable.hh | ghidra.analysis.jumptable | 141 | 154 | ✅100% | Done |
-| flow.hh | ghidra.analysis.flow | 70 | 76 | ✅100% | Done |
-| subflow.hh | ghidra.analysis.subflow | 90 | 94 | ✅100% | Done |
-| merge.hh | ghidra.analysis.merge | 55 | 56 | ✅100% | Done |
-| variable.hh | ghidra.ir.variable | 97 | 96 | ✅98% | Done |
-| heritage.hh | ghidra.analysis.heritage | 99 | 92 | ✅92% | Done |
-| funcdata.hh | ghidra.analysis.funcdata | 247 | 225 | ✅91% | Done |
-| comment.hh | ghidra.database.comment | 34 | 30 | ✅88% | Done |
-| cpool.hh | ghidra.database.cpool | 30 | 26 | ✅86% | Done |
-| stringmanage.hh | ghidra.database.stringmanage | 17 | 14 | ✅82% | Done |
-| blockaction.hh | ghidra.block.blockaction | 99 | 81 | ✅81% | Done |
-| inject_sleigh.hh | ghidra.arch.inject | 26 | 21 | ✅80% | Done |
-| printlanguage.hh | ghidra.output.printlanguage | 173 | 194 | ✅100% | Done |
-| constseq.hh | ghidra.analysis.constseq | 35 | 42 | ✅100% | Done |
+| prettyprint.hh | ghidra.output.prettyprint | 108 | 112 | ✅100% | Done |
+| cast.hh | ghidra.types.cast | 21 | 25 | ✅100% | Done |
+| graph.hh | ghidra.analysis.graph | 3 | 19 | ✅100% | Done |
+| op.hh | ghidra.ir.op | 127 | 137 | ✅100% | Done |
+| varnode.hh | ghidra.ir.varnode | 176 | 197 | ✅100% | Done |
 | double.hh | ghidra.analysis.double | 87 | 99 | ✅100% | Done |
-| varmap.hh | ghidra.database.varmap | 79 | 72 | ✅91% | Done |
-| fspec.hh | ghidra.fspec.fspec | 381 | 320 | ✅83% | Done |
-| dynamic.hh | ghidra.analysis.dynamic | 29 | 23 | 🟡79% | Good |
-| rangeutil.hh | ghidra.analysis.rangeutil | 94 | 73 | �77% | Good |
-| prefersplit.hh | ghidra.analysis.prefersplit | 26 | 20 | �76% | Good |
+| override.hh | ghidra.arch.override | 22 | 21 | ✅95% | Done |
+| merge.hh | ghidra.analysis.merge | 55 | 52 | ✅94% | Done |
+| options.hh | ghidra.arch.options | 47 | 44 | ✅93% | Done |
+| cover.hh | ghidra.ir.cover | 30 | 28 | ✅93% | Done |
+| jumptable.hh | ghidra.analysis.jumptable | 141 | 131 | ✅92% | Done |
+| printlanguage.hh | ghidra.output.printlanguage | 173 | 160 | ✅92% | Done |
+| architecture.hh | ghidra.arch.architecture | 83 | 76 | ✅91% | Done |
+| loadimage.hh | ghidra.arch.loadimage | 18 | 16 | ✅88% | Done |
+| flow.hh | ghidra.analysis.flow | 70 | 62 | ✅88% | Done |
+| variable.hh | ghidra.ir.variable | 97 | 85 | ✅87% | Done |
+| heritage.hh | ghidra.analysis.heritage | 99 | 87 | ✅87% | Done |
+| printc.hh | ghidra.output.printc | 176 | 152 | ✅86% | Done |
+| funcdata.hh | ghidra.analysis.funcdata | 247 | 210 | ✅85% | Done |
+| comment.hh | ghidra.database.comment | 34 | 28 | ✅82% | Done |
+| blockaction.hh | ghidra.block.blockaction | 99 | 81 | ✅81% | Done |
+| subflow.hh | ghidra.analysis.subflow | 90 | 73 | ✅81% | Done |
+| block.hh | ghidra.block.block | 210 | 161 | 🟡76% | Good |
+| prefersplit.hh | ghidra.analysis.prefersplit | 26 | 20 | 🟡76% | Good |
+| rangeutil.hh | ghidra.analysis.rangeutil | 94 | 72 | 🟡76% | Good |
+| dynamic.hh | ghidra.analysis.dynamic | 29 | 22 | 🟡75% | Good |
+| fspec.hh | ghidra.fspec.fspec | 381 | 287 | 🟡75% | Good |
+| inject_sleigh.hh | ghidra.arch.inject | 26 | 17 | 🟡65% | Good |
+| constseq.hh | ghidra.analysis.constseq | 35 | 23 | 🟡65% | Good |
+| varmap.hh | ghidra.database.varmap | 79 | 47 | 🟡59% | Good |
+| userop.hh | ghidra.arch.userop | 52 | 28 | 🟡53% | Good |
+| database.hh | ghidra.database.database | 159 | 82 | 🟡51% | Good |
+| cpool.hh | ghidra.database.cpool | 30 | 15 | 🟡50% | Good |
+| stringmanage.hh | ghidra.database.stringmanage | 17 | 8 | 🔴47% | LOW |
+| typeop.hh | ghidra.ir.typeop | 110 | 35 | 🔴31% | **LOW** |
 
 ## Summary Stats
 
-- **✅ 100% complete**: 23 modules (printc, prettyprint, block, cast, database, graph, options, override, cover, userop, op, typeop, loadimage, varnode, architecture, jumptable, printlanguage, constseq, double, flow, subflow, merge)
-- **✅ 80%+**: 9 modules (variable, heritage, varmap, funcdata, comment, cpool, fspec, stringmanage, blockaction, inject)
-- **🟡 76-79%**: 3 modules (dynamic, rangeutil, prefersplit)
-- **🔴 Below 50%**: 0 modules
-- **Total Python methods**: 4815 (148% of C++ method count)
+- **✅ 100% complete (≥95%)**: 7 modules (prettyprint, cast, graph, op, varnode, double, override)
+- **✅ 80%+ (80-94%)**: 15 modules (merge, options, cover, jumptable, printlanguage, architecture, loadimage, flow, variable, heritage, printc, funcdata, comment, blockaction, subflow)
+- **🟡 50-79%**: 11 modules (block, prefersplit, rangeutil, dynamic, fspec, inject, constseq, varmap, userop, database, cpool)
+- **🔴 Below 50%**: 2 modules (stringmanage 47%, **typeop 31%**)
+- **Total own methods**: 2712 / 3251 C++ = **83%**
 
 ## Change Log
 

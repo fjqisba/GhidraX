@@ -325,6 +325,195 @@ class TypeOpFunc(TypeOp):
         return self.tlst.getBase(invn.getSize(), self.metain)
 
 
+# =========================================================================
+# Concrete TypeOp subclasses for opcodes with special type behavior
+# =========================================================================
+
+class TypeOpCopy(TypeOp):
+    """CPUI_COPY — propagates type directly through."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_COPY, "COPY")
+    def getInputCast(self, op, slot, castStrategy=None):
+        if castStrategy is None: return None
+        outvn = op.getOut()
+        invn = op.getIn(0)
+        if outvn is None or invn is None: return None
+        return castStrategy.castStandard(outvn.getHighTypeDefFacing() if hasattr(outvn,'getHighTypeDefFacing') else outvn.getType(),
+                                          invn.getHighTypeReadFacing(op) if hasattr(invn,'getHighTypeReadFacing') else invn.getType(),
+                                          False, True)
+    def getOutputToken(self, op, castStrategy=None):
+        invn = op.getIn(0)
+        return invn.getHighTypeReadFacing(op) if invn is not None and hasattr(invn,'getHighTypeReadFacing') else None
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype  # COPY propagates type directly
+
+class TypeOpLoad(TypeOp):
+    """CPUI_LOAD — dereference pointer to produce value."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_LOAD, "LOAD")
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if outslot == -1 and inslot == 1:  # from pointer input to output
+            if hasattr(alttype, 'getPtrTo'):
+                return alttype.getPtrTo()
+        return None
+
+class TypeOpStore(TypeOp):
+    """CPUI_STORE — store value through pointer."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_STORE, "STORE")
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpBranch(TypeOp):
+    """CPUI_BRANCH."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_BRANCH, "BRANCH")
+
+class TypeOpCbranch(TypeOp):
+    """CPUI_CBRANCH."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_CBRANCH, "CBRANCH")
+
+class TypeOpBranchind(TypeOp):
+    """CPUI_BRANCHIND."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_BRANCHIND, "BRANCHIND")
+
+class TypeOpCall(TypeOp):
+    """CPUI_CALL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_CALL, "CALL")
+
+class TypeOpCallind(TypeOp):
+    """CPUI_CALLIND."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_CALLIND, "CALLIND")
+
+class TypeOpCallother(TypeOp):
+    """CPUI_CALLOTHER."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_CALLOTHER, "CALLOTHER")
+
+class TypeOpReturn(TypeOp):
+    """CPUI_RETURN."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_RETURN, "RETURN")
+
+class TypeOpIntZext(TypeOpUnary):
+    """CPUI_INT_ZEXT — zero extension, propagates unsigned type."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_ZEXT, "ZEXT", TYPE_UINT, TYPE_UINT)
+    def getOutputToken(self, op, castStrategy=None):
+        return self.tlst.getBase(op.getOut().getSize(), TYPE_UINT) if op.getOut() else None
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if inslot == 0 and outslot == -1:  # from input to output: extend
+            return alttype
+        return None
+
+class TypeOpIntSext(TypeOpUnary):
+    """CPUI_INT_SEXT — sign extension, propagates signed type."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SEXT, "SEXT", TYPE_INT, TYPE_INT)
+    def getOutputToken(self, op, castStrategy=None):
+        return self.tlst.getBase(op.getOut().getSize(), TYPE_INT) if op.getOut() else None
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if inslot == 0 and outslot == -1:
+            return alttype
+        return None
+
+class TypeOpIntAdd(TypeOpBinary):
+    """CPUI_INT_ADD — addition, pointer arithmetic propagation."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_ADD, "+", TYPE_INT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if hasattr(alttype, 'getMetatype') and alttype.getMetatype() == TYPE_PTR:
+            return alttype
+        return None
+
+class TypeOpIntSub(TypeOpBinary):
+    """CPUI_INT_SUB — subtraction."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SUB, "-", TYPE_INT, TYPE_INT)
+
+class TypeOpPiece(TypeOpFunc):
+    """CPUI_PIECE — concatenation of two values."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_PIECE, "PIECE", TYPE_UNKNOWN, TYPE_UNKNOWN)
+
+class TypeOpSubpiece(TypeOpFunc):
+    """CPUI_SUBPIECE — extraction of sub-value."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_SUBPIECE, "SUBPIECE", TYPE_UNKNOWN, TYPE_UNKNOWN)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None  # SUBPIECE truncation doesn't directly propagate
+
+class TypeOpCast(TypeOp):
+    """CPUI_CAST — explicit type cast."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_CAST, "CAST")
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None  # Cast breaks type propagation
+
+class TypeOpPtradd(TypeOp):
+    """CPUI_PTRADD — pointer + index*size."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_PTRADD, "PTRADD")
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if inslot == 0:  # pointer input propagates to output
+            return alttype
+        return None
+
+class TypeOpPtrsub(TypeOpBinary):
+    """CPUI_PTRSUB — pointer + constant offset."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_PTRSUB, "PTRSUB", TYPE_UNKNOWN, TYPE_UNKNOWN)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if inslot == 0:
+            return alttype
+        return None
+
+class TypeOpMultiequal(TypeOp):
+    """CPUI_MULTIEQUAL — SSA phi-node, propagates type through."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_MULTIEQUAL, "MULTIEQUAL")
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype
+
+class TypeOpIndirect(TypeOp):
+    """CPUI_INDIRECT — indirect effect, propagates type through."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INDIRECT, "INDIRECT")
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if inslot == 0:
+            return alttype
+        return None
+
+class TypeOpSegmentOp(TypeOp):
+    """CPUI_SEGMENTOP."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_SEGMENTOP, "SEGMENTOP")
+
+class TypeOpCpoolRef(TypeOp):
+    """CPUI_CPOOLREF."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_CPOOLREF, "CPOOLREF")
+
+class TypeOpNew(TypeOp):
+    """CPUI_NEW."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_NEW, "NEW")
+
+class TypeOpInsert(TypeOpFunc):
+    """CPUI_INSERT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INSERT, "INSERT", TYPE_UNKNOWN, TYPE_UNKNOWN)
+
+class TypeOpExtract(TypeOpFunc):
+    """CPUI_EXTRACT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_EXTRACT, "EXTRACT", TYPE_UNKNOWN, TYPE_UNKNOWN)
+
+
 def registerTypeOps(tlst: TypeFactory, trans=None) -> List[Optional[TypeOp]]:
     """Build all TypeOp objects indexed by OpCode value.
 

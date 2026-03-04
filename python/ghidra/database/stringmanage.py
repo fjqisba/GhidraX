@@ -90,6 +90,32 @@ class StringManager:
         return 0, charsize
 
 
+    def setMaxChars(self, val: int) -> None:
+        self.maximumChars = val
+
+    def getMaxChars(self) -> int:
+        return self.maximumChars
+
+    def encode(self, encoder) -> None:
+        """Encode all cached strings to a stream."""
+        pass
+
+    def decode(self, decoder) -> None:
+        """Decode cached strings from a stream."""
+        pass
+
+    def testForString(self, addr: Address, charType: Datatype, buf: bytes, sz: int) -> bool:
+        """Quick test if the given data could be a string."""
+        if sz < 1:
+            return False
+        charsize = charType.getSize() if hasattr(charType, 'getSize') else 1
+        return self.hasCharTerminator(buf, sz, charsize)
+
+    def getCharType(self, size: int):
+        """Get the character data-type for the given element size."""
+        return None
+
+
 class StringManagerUnicode(StringManager):
     """An implementation that understands terminated unicode strings."""
 
@@ -98,5 +124,55 @@ class StringManagerUnicode(StringManager):
         self.glb = glb  # Architecture
 
     def getStringData(self, addr: Address, charType: Datatype) -> tuple[bytes, bool]:
-        # Placeholder: would read from loadimage in full implementation
-        return b"", False
+        """Retrieve string data by reading from the load image."""
+        if self.glb is None or not hasattr(self.glb, 'loader') or self.glb.loader is None:
+            return b"", False
+        charsize = charType.getSize() if hasattr(charType, 'getSize') else 1
+        maxbytes = self.maximumChars * charsize
+        buf = bytearray(maxbytes)
+        try:
+            self.glb.loader.loadFill(buf, maxbytes, addr)
+        except Exception:
+            return b"", False
+        # Find null terminator
+        result = bytearray()
+        truncated = True
+        for i in range(0, maxbytes, charsize):
+            chunk = buf[i:i + charsize]
+            if all(b == 0 for b in chunk):
+                truncated = False
+                break
+            result.extend(chunk)
+        if not result:
+            return b"", False
+        # Convert to UTF-8
+        if charsize == 1:
+            return bytes(result), truncated
+        elif charsize == 2:
+            try:
+                text = result.decode('utf-16-le' if not self._isBigEndian() else 'utf-16-be')
+                return text.encode('utf-8'), truncated
+            except Exception:
+                return bytes(result), truncated
+        elif charsize == 4:
+            try:
+                text = result.decode('utf-32-le' if not self._isBigEndian() else 'utf-32-be')
+                return text.encode('utf-8'), truncated
+            except Exception:
+                return bytes(result), truncated
+        return bytes(result), truncated
+
+    def _isBigEndian(self) -> bool:
+        if self.glb is not None and hasattr(self.glb, 'translate') and self.glb.translate is not None:
+            return self.glb.translate.isBigEndian() if hasattr(self.glb.translate, 'isBigEndian') else False
+        return False
+
+    def readString(self, addr: Address, charType: Datatype) -> Optional[str]:
+        """Read a string from the load image, returning None if not a string."""
+        data, trunc = self.getStringData(addr, charType)
+        if not data:
+            return None
+        try:
+            return data.decode('utf-8', errors='replace')
+        except Exception:
+            return None
