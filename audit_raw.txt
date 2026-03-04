@@ -1,0 +1,679 @@
+﻿TOTAL: 339 classes, 339 methods
+\n## block.hh :: BlockList (1 methods)
+  getType
+\n## block.hh :: BlockDoWhile (1 methods)
+  getType
+\n## block.hh :: BlockInfLoop (1 methods)
+  getType
+\n## blockaction.hh :: ActionStructureTransform (1 methods)
+  ActionStructureTransform
+\n## blockaction.hh :: ActionNormalizeBranches (1 methods)
+  ActionNormalizeBranches
+\n## blockaction.hh :: ActionPreferComplement (1 methods)
+  ActionPreferComplement
+\n## blockaction.hh :: ActionBlockStructure (1 methods)
+  ActionBlockStructure
+\n## blockaction.hh :: ActionFinalStructure (1 methods)
+  ActionFinalStructure
+\n## blockaction.hh :: ActionReturnSplit (1 methods)
+  gatherReturnGotos
+\n## blockaction.hh :: ActionNodeJoin (1 methods)
+  ActionNodeJoin
+\n## cast.hh :: CastStrategyC (1 methods)
+  localExtensionType
+\n## comment.hh :: CommentOrder (1 methods)
+  operator
+\n## comment.hh :: CommentDatabase (1 methods)
+  CommentDatabase
+\n## condexe.hh :: ActionConditionalExe (1 methods)
+  ActionConditionalExe
+\n## constseq.hh :: RuleStringCopy (1 methods)
+  RuleStringCopy
+\n## constseq.hh :: RuleStringStore (1 methods)
+  RuleStringStore
+\n## context.hh :: SleighError (1 methods)
+  SleighError
+\n## coreaction.hh :: ActionStart (1 methods)
+  ActionStart
+\n## coreaction.hh :: ActionStop (1 methods)
+  ActionStop
+\n## coreaction.hh :: ActionStartCleanUp (1 methods)
+  ActionStartCleanUp
+\n## coreaction.hh :: ActionStartTypes (1 methods)
+  ActionStartTypes
+\n## coreaction.hh :: ActionLaneDivide (1 methods)
+  collectLaneSizes
+\n## coreaction.hh :: ActionForceGoto (1 methods)
+  ActionForceGoto
+\n## coreaction.hh :: ActionMultiCse (1 methods)
+  preferredOutput
+\n## coreaction.hh :: ActionShadowVar (1 methods)
+  ActionShadowVar
+\n## coreaction.hh :: ActionDeindirect (1 methods)
+  ActionDeindirect
+\n## coreaction.hh :: ActionVarnodeProps (1 methods)
+  ActionVarnodeProps
+\n## coreaction.hh :: ActionConstbase (1 methods)
+  ActionConstbase
+\n## coreaction.hh :: ActionSpacebase (1 methods)
+  ActionSpacebase
+\n## coreaction.hh :: ActionHeritage (1 methods)
+  ActionHeritage
+\n## coreaction.hh :: ActionNonzeroMask (1 methods)
+  ActionNonzeroMask
+\n## coreaction.hh :: ActionSetCasts (1 methods)
+  checkPointerIssues
+\n## coreaction.hh :: ActionAssignHigh (1 methods)
+  ActionAssignHigh
+\n## coreaction.hh :: ActionMarkIndirectOnly (1 methods)
+  ActionMarkIndirectOnly
+\n## coreaction.hh :: ActionMergeRequired (1 methods)
+  ActionMergeRequired
+\n## coreaction.hh :: ActionMergeAdjacent (1 methods)
+  ActionMergeAdjacent
+\n## coreaction.hh :: ActionMergeCopy (1 methods)
+  ActionMergeCopy
+\n## coreaction.hh :: ActionMergeMultiEntry (1 methods)
+  ActionMergeMultiEntry
+\n## coreaction.hh :: ActionMergeType (1 methods)
+  ActionMergeType
+\n## coreaction.hh :: ActionUnreachable (1 methods)
+  ActionUnreachable
+\n## coreaction.hh :: ActionDoNothing (1 methods)
+  ActionDoNothing
+\n## coreaction.hh :: ActionRedundBranch (1 methods)
+  ActionRedundBranch
+\n## coreaction.hh :: ActionDeterminedBranch (1 methods)
+  ActionDeterminedBranch
+\n## coreaction.hh :: ActionDeadCode (1 methods)
+  pushConsumed
+\n## coreaction.hh :: ActionSwitchNorm (1 methods)
+  ActionSwitchNorm
+\n## coreaction.hh :: ActionNormalizeSetup (1 methods)
+  ActionNormalizeSetup
+\n## coreaction.hh :: ActionPrototypeTypes (1 methods)
+  extendInput
+\n## coreaction.hh :: ActionDefaultParams (1 methods)
+  ActionDefaultParams
+\n## coreaction.hh :: ActionFuncLinkOutOnly (1 methods)
+  ActionFuncLinkOutOnly
+\n## coreaction.hh :: ActionParamDouble (1 methods)
+  ActionParamDouble
+\n## coreaction.hh :: ActionActiveParam (1 methods)
+  ActionActiveParam
+\n## coreaction.hh :: ActionActiveReturn (1 methods)
+  ActionActiveReturn
+\n## coreaction.hh :: ActionReturnRecovery (1 methods)
+  buildReturnOutput
+\n## coreaction.hh :: ActionRestrictLocal (1 methods)
+  ActionRestrictLocal
+\n## coreaction.hh :: ActionLikelyTrash (1 methods)
+  countMarks
+\n## coreaction.hh :: ActionMappedLocalSync (1 methods)
+  ActionMappedLocalSync
+\n## coreaction.hh :: ActionMapGlobals (1 methods)
+  ActionMapGlobals
+\n## coreaction.hh :: ActionInputPrototype (1 methods)
+  ActionInputPrototype
+\n## coreaction.hh :: ActionOutputPrototype (1 methods)
+  ActionOutputPrototype
+\n## coreaction.hh :: ActionUnjustifiedParams (1 methods)
+  ActionUnjustifiedParams
+\n## coreaction.hh :: ActionHideShadow (1 methods)
+  ActionHideShadow
+\n## coreaction.hh :: ActionDominantCopy (1 methods)
+  ActionDominantCopy
+\n## coreaction.hh :: ActionCopyMarker (1 methods)
+  ActionCopyMarker
+\n## coreaction.hh :: ActionDynamicMapping (1 methods)
+  ActionDynamicMapping
+\n## coreaction.hh :: ActionDynamicSymbols (1 methods)
+  ActionDynamicSymbols
+\n## coreaction.hh :: ActionPrototypeWarnings (1 methods)
+  ActionPrototypeWarnings
+\n## coreaction.hh :: ActionInternalStorage (1 methods)
+  ActionInternalStorage
+\n## database.hh :: LabSymbol (1 methods)
+  buildType
+\n## database.hh :: ScopeInternal (1 methods)
+  decodeHole
+\n## database.hh :: NullSubsort (1 methods)
+  NullSubsort
+\n## double.hh :: RuleDoubleIn (1 methods)
+  attemptMarking
+\n## double.hh :: RuleDoubleOut (1 methods)
+  attemptMarking
+\n## double.hh :: RuleDoubleLoad (1 methods)
+  RuleDoubleLoad
+\n## double.hh :: RuleDoubleStore (1 methods)
+  RuleDoubleStore
+\n## emulate.hh :: PutsCallBack (1 methods)
+  addressCallback
+\n## expression.hh :: BooleanMatch (1 methods)
+  sameOpComplement
+\n## fspec.hh :: ParamUnassignedError (1 methods)
+  ParamUnassignedError
+\n## fspec.hh :: FspecSpace (1 methods)
+  FspecSpace
+\n## fspec.hh :: ParamListRegisterOut (1 methods)
+  ParamListRegisterOut
+\n## fspec.hh :: ParamListRegister (1 methods)
+  ParamListRegister
+\n## fspec.hh :: ParamListMerged (1 methods)
+  ParamListMerged
+\n## fspec.hh :: ProtoParameter (1 methods)
+  ProtoParameter
+\n## globalcontext.hh :: ContextDatabase (1 methods)
+  encodeTracked
+\n## inject_sleigh.hh :: InjectPayloadCallother (1 methods)
+  InjectPayloadCallother
+\n## jumptable.hh :: JumptableThunkError (1 methods)
+  JumptableThunkError
+\n## loadimage.hh :: DataUnavailError (1 methods)
+  DataUnavailError
+\n## op.hh :: IopSpace (1 methods)
+  IopSpace
+\n## options.hh :: OptionExtraPop (1 methods)
+  OptionExtraPop
+\n## options.hh :: OptionReadOnly (1 methods)
+  OptionReadOnly
+\n## options.hh :: OptionDefaultPrototype (1 methods)
+  OptionDefaultPrototype
+\n## options.hh :: OptionInferConstPtr (1 methods)
+  OptionInferConstPtr
+\n## options.hh :: OptionForLoops (1 methods)
+  OptionForLoops
+\n## options.hh :: OptionInline (1 methods)
+  OptionInline
+\n## options.hh :: OptionNoReturn (1 methods)
+  OptionNoReturn
+\n## options.hh :: OptionWarning (1 methods)
+  OptionWarning
+\n## options.hh :: OptionNullPrinting (1 methods)
+  OptionNullPrinting
+\n## options.hh :: OptionInPlaceOps (1 methods)
+  OptionInPlaceOps
+\n## options.hh :: OptionConventionPrinting (1 methods)
+  OptionConventionPrinting
+\n## options.hh :: OptionNoCastPrinting (1 methods)
+  OptionNoCastPrinting
+\n## options.hh :: OptionHideExtensions (1 methods)
+  OptionHideExtensions
+\n## options.hh :: OptionMaxLineWidth (1 methods)
+  OptionMaxLineWidth
+\n## options.hh :: OptionIndentIncrement (1 methods)
+  OptionIndentIncrement
+\n## options.hh :: OptionCommentIndent (1 methods)
+  OptionCommentIndent
+\n## options.hh :: OptionCommentStyle (1 methods)
+  OptionCommentStyle
+\n## options.hh :: OptionCommentHeader (1 methods)
+  OptionCommentHeader
+\n## options.hh :: OptionCommentInstruction (1 methods)
+  OptionCommentInstruction
+\n## options.hh :: OptionIntegerFormat (1 methods)
+  OptionIntegerFormat
+\n## options.hh :: OptionBraceFormat (1 methods)
+  OptionBraceFormat
+\n## options.hh :: OptionSetAction (1 methods)
+  OptionSetAction
+\n## options.hh :: OptionCurrentAction (1 methods)
+  OptionCurrentAction
+\n## options.hh :: OptionAllowContextSet (1 methods)
+  OptionAllowContextSet
+\n## options.hh :: OptionIgnoreUnimplemented (1 methods)
+  OptionIgnoreUnimplemented
+\n## options.hh :: OptionErrorUnimplemented (1 methods)
+  OptionErrorUnimplemented
+\n## options.hh :: OptionErrorReinterpreted (1 methods)
+  OptionErrorReinterpreted
+\n## options.hh :: OptionErrorTooManyInstructions (1 methods)
+  OptionErrorTooManyInstructions
+\n## options.hh :: OptionProtoEval (1 methods)
+  OptionProtoEval
+\n## options.hh :: OptionSetLanguage (1 methods)
+  OptionSetLanguage
+\n## options.hh :: OptionJumpTableMax (1 methods)
+  OptionJumpTableMax
+\n## options.hh :: OptionJumpLoad (1 methods)
+  OptionJumpLoad
+\n## options.hh :: OptionToggleRule (1 methods)
+  OptionToggleRule
+\n## options.hh :: OptionAliasBlock (1 methods)
+  OptionAliasBlock
+\n## options.hh :: OptionMaxInstruction (1 methods)
+  OptionMaxInstruction
+\n## options.hh :: OptionNamespaceStrategy (1 methods)
+  OptionNamespaceStrategy
+\n## options.hh :: OptionNanIgnore (1 methods)
+  OptionNanIgnore
+\n## ruleaction.hh :: RuleEarlyRemoval (1 methods)
+  RuleEarlyRemoval
+\n## ruleaction.hh :: RuleSelectCse (1 methods)
+  RuleSelectCse
+\n## ruleaction.hh :: RulePiece2Zext (1 methods)
+  RulePiece2Zext
+\n## ruleaction.hh :: RulePiece2Sext (1 methods)
+  RulePiece2Sext
+\n## ruleaction.hh :: RuleBxor2NotEqual (1 methods)
+  RuleBxor2NotEqual
+\n## ruleaction.hh :: RuleOrMask (1 methods)
+  RuleOrMask
+\n## ruleaction.hh :: RuleAndMask (1 methods)
+  RuleAndMask
+\n## ruleaction.hh :: RuleOrConsume (1 methods)
+  RuleOrConsume
+\n## ruleaction.hh :: RuleOrCollapse (1 methods)
+  RuleOrCollapse
+\n## ruleaction.hh :: RuleAndOrLump (1 methods)
+  RuleAndOrLump
+\n## ruleaction.hh :: RuleNegateIdentity (1 methods)
+  RuleNegateIdentity
+\n## ruleaction.hh :: RuleShiftBitops (1 methods)
+  RuleShiftBitops
+\n## ruleaction.hh :: RuleRightShiftAnd (1 methods)
+  RuleRightShiftAnd
+\n## ruleaction.hh :: RuleIntLessEqual (1 methods)
+  RuleIntLessEqual
+\n## ruleaction.hh :: RuleEquality (1 methods)
+  RuleEquality
+\n## ruleaction.hh :: RuleTermOrder (1 methods)
+  RuleTermOrder
+\n## ruleaction.hh :: RulePullsubMulti (1 methods)
+  RulePullsubMulti
+\n## ruleaction.hh :: RulePullsubIndirect (1 methods)
+  RulePullsubIndirect
+\n## ruleaction.hh :: RuleNotDistribute (1 methods)
+  RuleNotDistribute
+\n## ruleaction.hh :: RuleHighOrderAnd (1 methods)
+  RuleHighOrderAnd
+\n## ruleaction.hh :: RuleAndDistribute (1 methods)
+  RuleAndDistribute
+\n## ruleaction.hh :: RuleLessOne (1 methods)
+  RuleLessOne
+\n## ruleaction.hh :: RuleRangeMeld (1 methods)
+  RuleRangeMeld
+\n## ruleaction.hh :: RuleFloatRange (1 methods)
+  RuleFloatRange
+\n## ruleaction.hh :: RuleAndCommute (1 methods)
+  RuleAndCommute
+\n## ruleaction.hh :: RuleAndPiece (1 methods)
+  RuleAndPiece
+\n## ruleaction.hh :: RuleAndZext (1 methods)
+  RuleAndZext
+\n## ruleaction.hh :: RuleAndCompare (1 methods)
+  RuleAndCompare
+\n## ruleaction.hh :: RuleDoubleSub (1 methods)
+  RuleDoubleSub
+\n## ruleaction.hh :: RuleDoubleShift (1 methods)
+  RuleDoubleShift
+\n## ruleaction.hh :: RuleDoubleArithShift (1 methods)
+  RuleDoubleArithShift
+\n## ruleaction.hh :: RuleConcatShift (1 methods)
+  RuleConcatShift
+\n## ruleaction.hh :: RuleLeftRight (1 methods)
+  RuleLeftRight
+\n## ruleaction.hh :: RuleShiftCompare (1 methods)
+  RuleShiftCompare
+\n## ruleaction.hh :: RuleLessEqual (1 methods)
+  RuleLessEqual
+\n## ruleaction.hh :: RuleLessNotEqual (1 methods)
+  RuleLessNotEqual
+\n## ruleaction.hh :: RuleTrivialArith (1 methods)
+  RuleTrivialArith
+\n## ruleaction.hh :: RuleTrivialBool (1 methods)
+  RuleTrivialBool
+\n## ruleaction.hh :: RuleZextEliminate (1 methods)
+  RuleZextEliminate
+\n## ruleaction.hh :: RuleSlessToLess (1 methods)
+  RuleSlessToLess
+\n## ruleaction.hh :: RuleZextSless (1 methods)
+  RuleZextSless
+\n## ruleaction.hh :: RuleBitUndistribute (1 methods)
+  RuleBitUndistribute
+\n## ruleaction.hh :: RuleBooleanUndistribute (1 methods)
+  isMatch
+\n## ruleaction.hh :: RuleBooleanDedup (1 methods)
+  isMatch
+\n## ruleaction.hh :: RuleBooleanNegate (1 methods)
+  RuleBooleanNegate
+\n## ruleaction.hh :: RuleBoolZext (1 methods)
+  RuleBoolZext
+\n## ruleaction.hh :: RuleLogic2Bool (1 methods)
+  RuleLogic2Bool
+\n## ruleaction.hh :: RuleIndirectCollapse (1 methods)
+  RuleIndirectCollapse
+\n## ruleaction.hh :: RuleMultiCollapse (1 methods)
+  RuleMultiCollapse
+\n## ruleaction.hh :: RuleSborrow (1 methods)
+  RuleSborrow
+\n## ruleaction.hh :: RuleScarry (1 methods)
+  RuleScarry
+\n## ruleaction.hh :: RuleTrivialShift (1 methods)
+  RuleTrivialShift
+\n## ruleaction.hh :: RuleSignShift (1 methods)
+  RuleSignShift
+\n## ruleaction.hh :: RuleTestSign (1 methods)
+  findComparisons
+\n## ruleaction.hh :: RuleIdentityEl (1 methods)
+  RuleIdentityEl
+\n## ruleaction.hh :: RuleShift2Mult (1 methods)
+  RuleShift2Mult
+\n## ruleaction.hh :: RuleShiftPiece (1 methods)
+  RuleShiftPiece
+\n## ruleaction.hh :: RuleCollapseConstants (1 methods)
+  RuleCollapseConstants
+\n## ruleaction.hh :: RuleTransformCpool (1 methods)
+  RuleTransformCpool
+\n## ruleaction.hh :: RulePropagateCopy (1 methods)
+  RulePropagateCopy
+\n## ruleaction.hh :: Rule2Comp2Mult (1 methods)
+  Rule2Comp2Mult
+\n## ruleaction.hh :: RuleCarryElim (1 methods)
+  RuleCarryElim
+\n## ruleaction.hh :: RuleSub2Add (1 methods)
+  RuleSub2Add
+\n## ruleaction.hh :: RuleXorCollapse (1 methods)
+  RuleXorCollapse
+\n## ruleaction.hh :: RuleAddMultCollapse (1 methods)
+  RuleAddMultCollapse
+\n## ruleaction.hh :: RuleStoreVarnode (1 methods)
+  RuleStoreVarnode
+\n## ruleaction.hh :: RuleSubExtComm (1 methods)
+  RuleSubExtComm
+\n## ruleaction.hh :: RuleSubCommute (1 methods)
+  RuleSubCommute
+\n## ruleaction.hh :: RuleConcatCommute (1 methods)
+  RuleConcatCommute
+\n## ruleaction.hh :: RuleConcatZext (1 methods)
+  RuleConcatZext
+\n## ruleaction.hh :: RuleZextCommute (1 methods)
+  RuleZextCommute
+\n## ruleaction.hh :: RuleZextShiftZext (1 methods)
+  RuleZextShiftZext
+\n## ruleaction.hh :: RuleShiftAnd (1 methods)
+  RuleShiftAnd
+\n## ruleaction.hh :: RuleConcatZero (1 methods)
+  RuleConcatZero
+\n## ruleaction.hh :: RuleConcatLeftShift (1 methods)
+  RuleConcatLeftShift
+\n## ruleaction.hh :: RuleSubZext (1 methods)
+  RuleSubZext
+\n## ruleaction.hh :: RuleSubCancel (1 methods)
+  RuleSubCancel
+\n## ruleaction.hh :: RuleShiftSub (1 methods)
+  RuleShiftSub
+\n## ruleaction.hh :: RuleHumptyDumpty (1 methods)
+  RuleHumptyDumpty
+\n## ruleaction.hh :: RuleDumptyHump (1 methods)
+  RuleDumptyHump
+\n## ruleaction.hh :: RuleHumptyOr (1 methods)
+  RuleHumptyOr
+\n## ruleaction.hh :: RuleSwitchSingle (1 methods)
+  RuleSwitchSingle
+\n## ruleaction.hh :: RuleCondNegate (1 methods)
+  RuleCondNegate
+\n## ruleaction.hh :: RuleBoolNegate (1 methods)
+  RuleBoolNegate
+\n## ruleaction.hh :: RuleLess2Zero (1 methods)
+  RuleLess2Zero
+\n## ruleaction.hh :: RuleLessEqual2Zero (1 methods)
+  RuleLessEqual2Zero
+\n## ruleaction.hh :: RuleEqual2Zero (1 methods)
+  RuleEqual2Zero
+\n## ruleaction.hh :: RuleEqual2Constant (1 methods)
+  RuleEqual2Constant
+\n## ruleaction.hh :: RulePtrArith (1 methods)
+  verifyPreferredPointer
+\n## ruleaction.hh :: RuleStructOffset0 (1 methods)
+  RuleStructOffset0
+\n## ruleaction.hh :: RulePtraddUndo (1 methods)
+  RulePtraddUndo
+\n## ruleaction.hh :: RuleMultNegOne (1 methods)
+  RuleMultNegOne
+\n## ruleaction.hh :: RuleAddUnsigned (1 methods)
+  RuleAddUnsigned
+\n## ruleaction.hh :: Rule2Comp2Sub (1 methods)
+  Rule2Comp2Sub
+\n## ruleaction.hh :: RuleSubRight (1 methods)
+  RuleSubRight
+\n## ruleaction.hh :: RulePtrsubCharConstant (1 methods)
+  pushConstFurther
+\n## ruleaction.hh :: RuleExtensionPush (1 methods)
+  RuleExtensionPush
+\n## ruleaction.hh :: RuleSubNormal (1 methods)
+  RuleSubNormal
+\n## ruleaction.hh :: RulePositiveDiv (1 methods)
+  RulePositiveDiv
+\n## ruleaction.hh :: RuleDivTermAdd (1 methods)
+  RuleDivTermAdd
+\n## ruleaction.hh :: RuleDivTermAdd2 (1 methods)
+  RuleDivTermAdd2
+\n## ruleaction.hh :: RuleDivOpt (1 methods)
+  calcDivisor
+\n## ruleaction.hh :: RuleSignDiv2 (1 methods)
+  RuleSignDiv2
+\n## ruleaction.hh :: RuleDivChain (1 methods)
+  RuleDivChain
+\n## ruleaction.hh :: RuleSignForm (1 methods)
+  RuleSignForm
+\n## ruleaction.hh :: RuleSignForm2 (1 methods)
+  RuleSignForm2
+\n## ruleaction.hh :: RuleSignNearMult (1 methods)
+  RuleSignNearMult
+\n## ruleaction.hh :: RuleModOpt (1 methods)
+  RuleModOpt
+\n## ruleaction.hh :: RuleSignMod2nOpt (1 methods)
+  RuleSignMod2nOpt
+\n## ruleaction.hh :: RuleSignMod2Opt (1 methods)
+  RuleSignMod2Opt
+\n## ruleaction.hh :: RuleSegment (1 methods)
+  RuleSegment
+\n## ruleaction.hh :: RuleNegateNegate (1 methods)
+  RuleNegateNegate
+\n## ruleaction.hh :: RuleFloatCast (1 methods)
+  RuleFloatCast
+\n## ruleaction.hh :: RuleIgnoreNan (1 methods)
+  checkBackForCompare
+\n## ruleaction.hh :: RuleUnsigned2Float (1 methods)
+  RuleUnsigned2Float
+\n## ruleaction.hh :: RuleInt2FloatCollapse (1 methods)
+  RuleInt2FloatCollapse
+\n## ruleaction.hh :: RuleFuncPtrEncoding (1 methods)
+  RuleFuncPtrEncoding
+\n## ruleaction.hh :: RuleThreeWayCompare (1 methods)
+  RuleThreeWayCompare
+\n## ruleaction.hh :: RulePopcountBoolXor (1 methods)
+  RulePopcountBoolXor
+\n## ruleaction.hh :: RulePiecePathology (1 methods)
+  isPathology
+\n## ruleaction.hh :: RuleXorSwap (1 methods)
+  RuleXorSwap
+\n## ruleaction.hh :: RuleLzcountShiftBool (1 methods)
+  RuleLzcountShiftBool
+\n## ruleaction.hh :: RuleFloatSign (1 methods)
+  RuleFloatSign
+\n## ruleaction.hh :: RuleFloatSignCleanup (1 methods)
+  RuleFloatSignCleanup
+\n## ruleaction.hh :: RuleOrCompare (1 methods)
+  RuleOrCompare
+\n## ruleaction.hh :: RuleExpandLoad (1 methods)
+  checkAndComparison
+\n## subflow.hh :: RuleSubvarAnd (1 methods)
+  RuleSubvarAnd
+\n## subflow.hh :: RuleSubvarSubpiece (1 methods)
+  RuleSubvarSubpiece
+\n## subflow.hh :: RuleSubvarCompZero (1 methods)
+  RuleSubvarCompZero
+\n## subflow.hh :: RuleSubvarShift (1 methods)
+  RuleSubvarShift
+\n## subflow.hh :: RuleSubvarZext (1 methods)
+  RuleSubvarZext
+\n## subflow.hh :: RuleSplitFlow (1 methods)
+  RuleSplitFlow
+\n## subflow.hh :: RuleSplitCopy (1 methods)
+  RuleSplitCopy
+\n## subflow.hh :: RuleSplitLoad (1 methods)
+  RuleSplitLoad
+\n## subflow.hh :: RuleSplitStore (1 methods)
+  RuleSplitStore
+\n## subflow.hh :: RuleDumptyHumpLate (1 methods)
+  RuleDumptyHumpLate
+\n## subflow.hh :: RuleSubfloatConvert (1 methods)
+  RuleSubfloatConvert
+\n## typeop.hh :: TypeOpCopy (1 methods)
+  TypeOpCopy
+\n## typeop.hh :: TypeOpLoad (1 methods)
+  TypeOpLoad
+\n## typeop.hh :: TypeOpStore (1 methods)
+  TypeOpStore
+\n## typeop.hh :: TypeOpBranch (1 methods)
+  TypeOpBranch
+\n## typeop.hh :: TypeOpCbranch (1 methods)
+  TypeOpCbranch
+\n## typeop.hh :: TypeOpBranchind (1 methods)
+  TypeOpBranchind
+\n## typeop.hh :: TypeOpCall (1 methods)
+  TypeOpCall
+\n## typeop.hh :: TypeOpCallind (1 methods)
+  TypeOpCallind
+\n## typeop.hh :: TypeOpCallother (1 methods)
+  TypeOpCallother
+\n## typeop.hh :: TypeOpReturn (1 methods)
+  TypeOpReturn
+\n## typeop.hh :: TypeOpEqual (1 methods)
+  TypeOpEqual
+\n## typeop.hh :: TypeOpNotEqual (1 methods)
+  TypeOpNotEqual
+\n## typeop.hh :: TypeOpIntSless (1 methods)
+  TypeOpIntSless
+\n## typeop.hh :: TypeOpIntSlessEqual (1 methods)
+  TypeOpIntSlessEqual
+\n## typeop.hh :: TypeOpIntLess (1 methods)
+  TypeOpIntLess
+\n## typeop.hh :: TypeOpIntLessEqual (1 methods)
+  TypeOpIntLessEqual
+\n## typeop.hh :: TypeOpIntZext (1 methods)
+  TypeOpIntZext
+\n## typeop.hh :: TypeOpIntSext (1 methods)
+  TypeOpIntSext
+\n## typeop.hh :: TypeOpIntAdd (1 methods)
+  TypeOpIntAdd
+\n## typeop.hh :: TypeOpIntSub (1 methods)
+  TypeOpIntSub
+\n## typeop.hh :: TypeOpIntCarry (1 methods)
+  TypeOpIntCarry
+\n## typeop.hh :: TypeOpIntScarry (1 methods)
+  TypeOpIntScarry
+\n## typeop.hh :: TypeOpIntSborrow (1 methods)
+  TypeOpIntSborrow
+\n## typeop.hh :: TypeOpInt2Comp (1 methods)
+  TypeOpInt2Comp
+\n## typeop.hh :: TypeOpIntNegate (1 methods)
+  TypeOpIntNegate
+\n## typeop.hh :: TypeOpIntXor (1 methods)
+  TypeOpIntXor
+\n## typeop.hh :: TypeOpIntAnd (1 methods)
+  TypeOpIntAnd
+\n## typeop.hh :: TypeOpIntOr (1 methods)
+  TypeOpIntOr
+\n## typeop.hh :: TypeOpIntLeft (1 methods)
+  TypeOpIntLeft
+\n## typeop.hh :: TypeOpIntRight (1 methods)
+  TypeOpIntRight
+\n## typeop.hh :: TypeOpIntSright (1 methods)
+  TypeOpIntSright
+\n## typeop.hh :: TypeOpIntMult (1 methods)
+  TypeOpIntMult
+\n## typeop.hh :: TypeOpIntDiv (1 methods)
+  TypeOpIntDiv
+\n## typeop.hh :: TypeOpIntSdiv (1 methods)
+  TypeOpIntSdiv
+\n## typeop.hh :: TypeOpIntRem (1 methods)
+  TypeOpIntRem
+\n## typeop.hh :: TypeOpIntSrem (1 methods)
+  TypeOpIntSrem
+\n## typeop.hh :: TypeOpBoolNegate (1 methods)
+  TypeOpBoolNegate
+\n## typeop.hh :: TypeOpBoolXor (1 methods)
+  TypeOpBoolXor
+\n## typeop.hh :: TypeOpBoolAnd (1 methods)
+  TypeOpBoolAnd
+\n## typeop.hh :: TypeOpBoolOr (1 methods)
+  TypeOpBoolOr
+\n## typeop.hh :: TypeOpFloatEqual (1 methods)
+  TypeOpFloatEqual
+\n## typeop.hh :: TypeOpFloatNotEqual (1 methods)
+  TypeOpFloatNotEqual
+\n## typeop.hh :: TypeOpFloatLess (1 methods)
+  TypeOpFloatLess
+\n## typeop.hh :: TypeOpFloatLessEqual (1 methods)
+  TypeOpFloatLessEqual
+\n## typeop.hh :: TypeOpFloatNan (1 methods)
+  TypeOpFloatNan
+\n## typeop.hh :: TypeOpFloatAdd (1 methods)
+  TypeOpFloatAdd
+\n## typeop.hh :: TypeOpFloatDiv (1 methods)
+  TypeOpFloatDiv
+\n## typeop.hh :: TypeOpFloatMult (1 methods)
+  TypeOpFloatMult
+\n## typeop.hh :: TypeOpFloatSub (1 methods)
+  TypeOpFloatSub
+\n## typeop.hh :: TypeOpFloatNeg (1 methods)
+  TypeOpFloatNeg
+\n## typeop.hh :: TypeOpFloatAbs (1 methods)
+  TypeOpFloatAbs
+\n## typeop.hh :: TypeOpFloatSqrt (1 methods)
+  TypeOpFloatSqrt
+\n## typeop.hh :: TypeOpFloatInt2Float (1 methods)
+  TypeOpFloatInt2Float
+\n## typeop.hh :: TypeOpFloatFloat2Float (1 methods)
+  TypeOpFloatFloat2Float
+\n## typeop.hh :: TypeOpFloatTrunc (1 methods)
+  TypeOpFloatTrunc
+\n## typeop.hh :: TypeOpFloatCeil (1 methods)
+  TypeOpFloatCeil
+\n## typeop.hh :: TypeOpFloatFloor (1 methods)
+  TypeOpFloatFloor
+\n## typeop.hh :: TypeOpFloatRound (1 methods)
+  TypeOpFloatRound
+\n## typeop.hh :: TypeOpMulti (1 methods)
+  TypeOpMulti
+\n## typeop.hh :: TypeOpIndirect (1 methods)
+  TypeOpIndirect
+\n## typeop.hh :: TypeOpCast (1 methods)
+  TypeOpCast
+\n## typeop.hh :: TypeOpPtradd (1 methods)
+  TypeOpPtradd
+\n## typeop.hh :: TypeOpPtrsub (1 methods)
+  TypeOpPtrsub
+\n## typeop.hh :: TypeOpSegment (1 methods)
+  TypeOpSegment
+\n## typeop.hh :: TypeOpNew (1 methods)
+  TypeOpNew
+\n## typeop.hh :: TypeOpInsert (1 methods)
+  TypeOpInsert
+\n## typeop.hh :: TypeOpExtract (1 methods)
+  TypeOpExtract
+\n## typeop.hh :: TypeOpPopcount (1 methods)
+  TypeOpPopcount
+\n## typeop.hh :: TypeOpLzcount (1 methods)
+  TypeOpLzcount
+\n## userop.hh :: UnspecializedPcodeOp (1 methods)
+  UnspecializedPcodeOp
+\n## userop.hh :: VolatileOp (1 methods)
+  appendSize
+\n## userop.hh :: VolatileReadOp (1 methods)
+  VolatileReadOp
+\n## userop.hh :: VolatileWriteOp (1 methods)
+  VolatileWriteOp
+\n## userop.hh :: TermPatternOp (1 methods)
+  TermPatternOp
+\n## userop.hh :: InternalStringOp (1 methods)
+  InternalStringOp
+\n## variable.hh :: PieceCompareByOffset (1 methods)
+  operator
+\n## varnode.hh :: VarnodeCompareLocDef (1 methods)
+  operator
+\n## varnode.hh :: VarnodeCompareDefLoc (1 methods)
+  operator
