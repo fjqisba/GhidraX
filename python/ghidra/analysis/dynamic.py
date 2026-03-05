@@ -72,6 +72,12 @@ class DynamicHash:
     def getHash(self) -> int:
         return self._hash
 
+    def setHash(self, h: int) -> None:
+        self._hash = h
+
+    def setAddress(self, addr: Address) -> None:
+        self._addrresult = addr
+
     def getAddress(self) -> Address:
         return self._addrresult
 

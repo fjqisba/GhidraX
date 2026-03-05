@@ -34,6 +34,10 @@ class UserPcodeOp:
     def getOutputLocal(self, op=None): return None
     def getInputLocal(self, op=None, slot=0): return None
     def extractAnnotationSize(self, vn, op): return 0
+    def setIndex(self, ind: int) -> None: self.useropindex = ind
+    def setDisplay(self, flags: int) -> None: self.flags = (self.flags & ~7) | (flags & 7)
+    def encode(self, encoder) -> None: pass
+    def decode(self, decoder) -> None: pass
 
 
 class UnspecializedPcodeOp(UserPcodeOp):
@@ -144,6 +148,12 @@ class SegmentOp(UserPcodeOp):
     def getInnerSize(self) -> int:
         return self.innerinsize
 
+    def decode(self, decoder) -> None:
+        pass
+
+    def getNumVariableTerms(self) -> int:
+        return 0
+
 
 class JumpAssistOp(UserPcodeOp):
     """A user-op for jump-table assist."""
@@ -165,6 +175,9 @@ class JumpAssistOp(UserPcodeOp):
 
     def getDefaultAddr(self) -> int:
         return self.defaultaddr
+
+    def decode(self, decoder) -> None:
+        pass
 
 
 class InternalStringOp(UserPcodeOp):

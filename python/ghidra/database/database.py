@@ -251,6 +251,73 @@ class Symbol:
             return self.type.getSize()
         return 0
 
+    def setName(self, nm: str) -> None:
+        self.name = nm
+
+    def setDisplayName(self, nm: str) -> None:
+        self.displayName = nm
+
+    def setType(self, ct) -> None:
+        self.type = ct
+
+    def setFlags(self, fl: int) -> None:
+        self.flags |= fl
+
+    def clearFlags(self, fl: int) -> None:
+        self.flags &= ~fl
+
+    def setCategory(self, cat: int, ind: int) -> None:
+        self.category = cat
+        self.catindex = ind
+
+    def setTypeLock(self, val: bool) -> None:
+        if val:
+            self.flags |= Varnode.typelock
+        else:
+            self.flags &= ~Varnode.typelock
+
+    def setNameLock(self, val: bool) -> None:
+        if val:
+            self.flags |= Varnode.namelock
+        else:
+            self.flags &= ~Varnode.namelock
+
+    def setVolatile(self, val: bool) -> None:
+        if val:
+            self.flags |= Varnode.volatil
+        else:
+            self.flags &= ~Varnode.volatil
+
+    def setThisPointer(self, val: bool) -> None:
+        if val:
+            self.dispflags |= Symbol.is_this_ptr
+        else:
+            self.dispflags &= ~Symbol.is_this_ptr
+
+    def setMergeProblems(self, val: bool) -> None:
+        if val:
+            self.dispflags |= Symbol.merge_problems
+        else:
+            self.dispflags &= ~Symbol.merge_problems
+
+    def checkSizeTypeLock(self) -> bool:
+        return self.isSizeTypeLocked()
+
+    def setSizeTypeLock(self, val: bool) -> None:
+        if val:
+            self.dispflags |= Symbol.size_typelock
+        else:
+            self.dispflags &= ~Symbol.size_typelock
+
+    def setScope(self, sc) -> None:
+        self.scope = sc
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
     def __repr__(self) -> str:
         tname = self.type.getName() if self.type else "?"
         return f"Symbol({self.name!r}, type={tname}, id={self.symbolId:#x})"
@@ -546,6 +613,119 @@ class ScopeInternal(Scope):
     def getAllSymbols(self) -> Iterator[Symbol]:
         return iter(self._symbolsById.values())
 
+    def getSymbolList(self) -> List[Symbol]:
+        return list(self._symbolsById.values())
+
+    def findFunction(self, addr: Address) -> Optional[FunctionSymbol]:
+        """Find a FunctionSymbol by entry address."""
+        for sym in self._symbolsById.values():
+            if isinstance(sym, FunctionSymbol):
+                for entry in sym.mapentry:
+                    if entry.addr == addr:
+                        return sym
+        return None
+
+    def addFunction(self, addr: Address, name: str, size: int = 1) -> FunctionSymbol:
+        """Create and add a FunctionSymbol."""
+        fsym = FunctionSymbol(self, name, size)
+        entry = SymbolEntry(fsym, addr, size)
+        self.addSymbol(fsym)
+        self.addMapEntry(fsym, entry)
+        return fsym
+
+    def queryByAddr(self, addr: Address, sz: int) -> Optional[Symbol]:
+        """Find a symbol that covers the given address range."""
+        entry = self.findContainer(addr, sz, Address())
+        if entry is not None:
+            return entry.getSymbol()
+        return None
+
+    def queryProperties(self, addr: Address, size: int, usepoint, flags_ref) -> None:
+        """Query boolean properties of the given address range."""
+        entry = self.findAddr(addr, usepoint if usepoint else Address())
+        if entry is not None:
+            if isinstance(flags_ref, list) and flags_ref:
+                flags_ref[0] = entry.getAllFlags()
+            elif isinstance(flags_ref, int):
+                pass  # Can't mutate int
+
+    def renameSymbol(self, sym: Symbol, newname: str) -> None:
+        """Rename a symbol."""
+        oldname = sym.name
+        lst = self._symbolsByName.get(oldname)
+        if lst:
+            try:
+                lst.remove(sym)
+            except ValueError:
+                pass
+        sym.setName(newname)
+        if newname not in self._symbolsByName:
+            self._symbolsByName[newname] = []
+        self._symbolsByName[newname].append(sym)
+
+    def retypeSymbol(self, sym: Symbol, ct) -> None:
+        """Change the data-type of a symbol."""
+        sym.setType(ct)
+
+    def setAttribute(self, sym: Symbol, attr: int) -> None:
+        sym.setFlags(attr)
+
+    def clearAttribute(self, sym: Symbol, attr: int) -> None:
+        sym.clearFlags(attr)
+
+    def setCategory(self, sym: Symbol, cat: int, ind: int) -> None:
+        sym.setCategory(cat, ind)
+
+    def findOverlap(self, addr: Address, size: int) -> Optional[SymbolEntry]:
+        """Find any symbol entry that overlaps the given range."""
+        for entries_list in self._entriesByAddr.values():
+            for entry in entries_list:
+                if entry.addr.getSpace() is not addr.getSpace():
+                    continue
+                e_start = entry.getFirst()
+                e_end = entry.getLast()
+                a_start = addr.getOffset()
+                a_end = a_start + size - 1
+                if e_start <= a_end and a_start <= e_end:
+                    return entry
+        return None
+
+    def findClosestFit(self, addr: Address, size: int, usepoint: Address) -> Optional[SymbolEntry]:
+        """Find the closest fitting symbol entry for the given range."""
+        return self.findContainer(addr, size, usepoint)
+
+    def setProperties(self, addr: Address, size: int, flags: int) -> None:
+        pass
+
+    def adjustCaches(self) -> None:
+        pass
+
+    def clearUnlocked(self) -> None:
+        """Remove all symbols that aren't type-locked or name-locked."""
+        to_remove = [s for s in self._symbolsById.values()
+                     if not s.isTypeLocked() and not s.isNameLocked()]
+        for sym in to_remove:
+            self.removeSymbol(sym)
+
+    def clearUnlockedCategory(self, cat: int) -> None:
+        """Remove unlocked symbols in the given category."""
+        lst = self._categoryMap.get(cat, [])
+        to_remove = [s for s in lst if not s.isTypeLocked() and not s.isNameLocked()]
+        for sym in to_remove:
+            self.removeSymbol(sym)
+
+    def removeRange(self, spc, first: int, last: int) -> None:
+        pass
+
+    def addRange(self, spc, first: int, last: int) -> None:
+        pass
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
 
 # =========================================================================
 # Database
@@ -591,6 +771,29 @@ class Database:
         """Find the most specific scope owning the given address."""
         # Simplified: just return global scope
         return self._globalScope
+
+    def removeScope(self, scope: Scope) -> None:
+        """Remove a scope and all its children."""
+        for child_id in list(scope.children.keys()):
+            child = scope.children[child_id]
+            self.removeScope(child)
+        self._scopeMap.pop(scope.uniqueId, None)
+        if scope.parent is not None:
+            scope.parent.detachScope(scope.uniqueId)
+
+    def renameScope(self, scope: Scope, newname: str) -> None:
+        scope.name = newname
+        scope.displayName = newname
+
+    def mapScope(self, scope: Scope, spc, first: int, last: int) -> None:
+        """Associate an address range with a scope."""
+        pass
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
 
     def clear(self) -> None:
         self._scopeMap.clear()

@@ -27,6 +27,7 @@ class NameRecommend:
     def getSize(self) -> int: return self.size
     def getName(self) -> str: return self.name
     def getSymbolId(self) -> int: return self.symbolId
+    def setName(self, nm: str) -> None: self.name = nm
 
 
 class DynamicRecommend:
@@ -43,6 +44,7 @@ class DynamicRecommend:
     def getHash(self) -> int: return self.hash
     def getName(self) -> str: return self.name
     def getSymbolId(self) -> int: return self.symbolId
+    def setName(self, nm: str) -> None: self.name = nm
 
 
 class TypeRecommend:
@@ -54,6 +56,7 @@ class TypeRecommend:
 
     def getAddress(self) -> Address: return self.addr
     def getType(self): return self.dataType
+    def setType(self, dt) -> None: self.dataType = dt
 
 
 class RangeHint:
@@ -77,6 +80,29 @@ class RangeHint:
     def getStart(self) -> int: return self.sstart
     def getSize(self) -> int: return self.size
     def getRangeType(self) -> int: return self.type
+    def getHighIndex(self) -> int: return self.highind
+    def setHighIndex(self, val: int) -> None: self.highind = val
+
+    def absorb(self, other: 'RangeHint') -> bool:
+        if self.sstart + self.size == other.sstart:
+            self.size += other.size
+            return True
+        return False
+
+    def merge(self, other: 'RangeHint') -> bool:
+        if self.sstart == other.sstart and self.size == other.size:
+            if other.type == RangeHint.fixed:
+                self.type = RangeHint.fixed
+                self.dataType = other.dataType
+            return True
+        return False
+
+    def preferred(self, other: 'RangeHint') -> bool:
+        if self.type == RangeHint.fixed and other.type != RangeHint.fixed:
+            return True
+        if self.type != RangeHint.fixed and other.type == RangeHint.fixed:
+            return False
+        return self.size >= other.size
 
 
 class MapState:
@@ -133,6 +159,32 @@ class MapState:
 
     def getRanges(self) -> List[RangeHint]:
         return self._range
+
+    def initialize(self) -> None:
+        self._range.clear()
+
+    def gatherSymbols(self, scope) -> None:
+        if scope is None:
+            return
+        if not hasattr(scope, '_entriesByAddr'):
+            return
+        for entries in scope._entriesByAddr.values():
+            for entry in entries:
+                addr = entry.addr
+                off = addr.getOffset() if hasattr(addr, 'getOffset') else 0
+                tp = entry.symbol.type if hasattr(entry.symbol, 'type') else None
+                sz = entry.size
+                self.addRange(off, tp, 0, RangeHint.fixed)
+
+    def reconcileDatatypes(self) -> None:
+        prev = None
+        merged = []
+        for rh in self._range:
+            if prev is not None and prev.absorb(rh):
+                continue
+            merged.append(rh)
+            prev = rh
+        self._range = merged
 
 
 class ScopeLocal(ScopeInternal):
@@ -249,6 +301,33 @@ class ScopeLocal(ScopeInternal):
     def queryProperties(self, addr, size: int, usepoint, flags_ref) -> None:
         """Query boolean properties of the given address range."""
         pass
+
+    def restructureHigh(self, fd) -> None:
+        """Restructure variables using HighVariable information."""
+        if self._space is None:
+            return
+        from ghidra.core.address import RangeList
+        rl = RangeList()
+        ms = MapState(self._space, fd, rl, self._glb)
+        ms.gatherHighs(fd)
+        ms.sortAlias()
+
+    def negotiateTypeLock(self, entry) -> bool:
+        """Negotiate type lock between a SymbolEntry and its Varnode."""
+        if entry is None:
+            return False
+        sym = entry.symbol if hasattr(entry, 'symbol') else None
+        if sym is None:
+            return False
+        return hasattr(sym, 'isTypeLocked') and sym.isTypeLocked()
+
+    def isUnmappedUnlocked(self, addr: Address, sz: int) -> bool:
+        """Check if an address range is unmapped and unlocked."""
+        key = (addr.getSpaceIndex() if hasattr(addr, 'getSpaceIndex') else 0,
+               addr.getOffset() if hasattr(addr, 'getOffset') else 0)
+        if key in self._entriesByAddr:
+            return False
+        return True
 
     def encode(self, encoder) -> None:
         """Encode this scope to a stream."""

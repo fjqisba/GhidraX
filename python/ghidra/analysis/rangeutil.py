@@ -676,6 +676,26 @@ class Partition:
         self.stopNode = None
         self.isDirty: bool = False
 
+    def getStartNode(self):
+        return self.startNode
+
+    def getStopNode(self):
+        return self.stopNode
+
+    def setStartNode(self, node) -> None:
+        self.startNode = node
+
+    def setStopNode(self, node) -> None:
+        self.stopNode = node
+
+    def markDirty(self) -> None:
+        self.isDirty = True
+
+    def clear(self) -> None:
+        self.startNode = None
+        self.stopNode = None
+        self.isDirty = False
+
 
 class Widener:
     """Class holding a particular widening strategy for the ValueSetSolver iteration."""

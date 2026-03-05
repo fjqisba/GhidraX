@@ -368,50 +368,122 @@ class TypeOpBranch(TypeOp):
     """CPUI_BRANCH."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_BRANCH, "BRANCH")
+    def getInputLocal(self, op, slot):
+        return self.tlst.getTypeVoid()
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpCbranch(TypeOp):
     """CPUI_CBRANCH."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_CBRANCH, "CBRANCH")
+    def getInputLocal(self, op, slot):
+        if slot == 1:
+            return self.tlst.getBase(1, TYPE_BOOL)
+        return self.tlst.getTypeVoid()
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpBranchind(TypeOp):
     """CPUI_BRANCHIND."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_BRANCHIND, "BRANCHIND")
+    def getInputLocal(self, op, slot):
+        return self.tlst.getTypeVoid()
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpCall(TypeOp):
     """CPUI_CALL."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_CALL, "CALL")
+    def getInputLocal(self, op, slot):
+        return self.tlst.getTypeVoid()
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpCallind(TypeOp):
     """CPUI_CALLIND."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_CALLIND, "CALLIND")
+    def getInputLocal(self, op, slot):
+        return self.tlst.getTypeVoid()
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpCallother(TypeOp):
     """CPUI_CALLOTHER."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_CALLOTHER, "CALLOTHER")
+    def getInputLocal(self, op, slot):
+        return self.tlst.getTypeVoid()
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpReturn(TypeOp):
     """CPUI_RETURN."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_RETURN, "RETURN")
+    def getInputLocal(self, op, slot):
+        return self.tlst.getTypeVoid()
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
+
+class TypeOpIntEqual(TypeOpBinary):
+    """CPUI_INT_EQUAL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_EQUAL, "==", TYPE_BOOL, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntNotEqual(TypeOpBinary):
+    """CPUI_INT_NOTEQUAL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_NOTEQUAL, "!=", TYPE_BOOL, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntSless(TypeOpBinary):
+    """CPUI_INT_SLESS."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SLESS, "s<", TYPE_BOOL, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntSlessEqual(TypeOpBinary):
+    """CPUI_INT_SLESSEQUAL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SLESSEQUAL, "s<=", TYPE_BOOL, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntLess(TypeOpBinary):
+    """CPUI_INT_LESS."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_LESS, "<", TYPE_BOOL, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntLessEqual(TypeOpBinary):
+    """CPUI_INT_LESSEQUAL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_LESSEQUAL, "<=", TYPE_BOOL, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
 
 class TypeOpIntZext(TypeOpUnary):
-    """CPUI_INT_ZEXT — zero extension, propagates unsigned type."""
+    """CPUI_INT_ZEXT — zero extension."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_INT_ZEXT, "ZEXT", TYPE_UINT, TYPE_UINT)
     def getOutputToken(self, op, castStrategy=None):
         return self.tlst.getBase(op.getOut().getSize(), TYPE_UINT) if op.getOut() else None
     def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
-        if inslot == 0 and outslot == -1:  # from input to output: extend
+        if inslot == 0 and outslot == -1:
             return alttype
         return None
 
 class TypeOpIntSext(TypeOpUnary):
-    """CPUI_INT_SEXT — sign extension, propagates signed type."""
+    """CPUI_INT_SEXT — sign extension."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_INT_SEXT, "SEXT", TYPE_INT, TYPE_INT)
     def getOutputToken(self, op, castStrategy=None):
@@ -422,7 +494,7 @@ class TypeOpIntSext(TypeOpUnary):
         return None
 
 class TypeOpIntAdd(TypeOpBinary):
-    """CPUI_INT_ADD — addition, pointer arithmetic propagation."""
+    """CPUI_INT_ADD — addition, pointer arithmetic."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_INT_ADD, "+", TYPE_INT, TYPE_INT)
     def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
@@ -434,32 +506,319 @@ class TypeOpIntSub(TypeOpBinary):
     """CPUI_INT_SUB — subtraction."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_INT_SUB, "-", TYPE_INT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if hasattr(alttype, 'getMetatype') and alttype.getMetatype() == TYPE_PTR:
+            if inslot == 0 and outslot == -1:
+                return alttype
+        return None
+
+class TypeOpIntCarry(TypeOpBinary):
+    """CPUI_INT_CARRY."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_CARRY, "CARRY", TYPE_BOOL, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntScarry(TypeOpBinary):
+    """CPUI_INT_SCARRY."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SCARRY, "SCARRY", TYPE_BOOL, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntSborrow(TypeOpBinary):
+    """CPUI_INT_SBORROW."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SBORROW, "SBORROW", TYPE_BOOL, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpInt2Comp(TypeOpUnary):
+    """CPUI_INT_2COMP — two's complement negate."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_2COMP, "-", TYPE_INT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype if inslot == 0 and outslot == -1 else None
+
+class TypeOpIntNegate(TypeOpUnary):
+    """CPUI_INT_NEGATE — bitwise negate."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_NEGATE, "~", TYPE_UINT, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype if inslot == 0 and outslot == -1 else None
+
+class TypeOpIntXor(TypeOpBinary):
+    """CPUI_INT_XOR."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_XOR, "^", TYPE_UINT, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype if outslot == -1 else None
+
+class TypeOpIntAnd(TypeOpBinary):
+    """CPUI_INT_AND."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_AND, "&", TYPE_UINT, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype if outslot == -1 else None
+
+class TypeOpIntOr(TypeOpBinary):
+    """CPUI_INT_OR."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_OR, "|", TYPE_UINT, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype if outslot == -1 else None
+
+class TypeOpIntLeft(TypeOpBinary):
+    """CPUI_INT_LEFT — left shift."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_LEFT, "<<", TYPE_INT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if inslot == 0 and outslot == -1:
+            return alttype
+        return None
+
+class TypeOpIntRight(TypeOpBinary):
+    """CPUI_INT_RIGHT — logical right shift."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_RIGHT, ">>", TYPE_UINT, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if inslot == 0 and outslot == -1:
+            return alttype
+        return None
+
+class TypeOpIntSright(TypeOpBinary):
+    """CPUI_INT_SRIGHT — arithmetic right shift."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SRIGHT, "s>>", TYPE_INT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        if inslot == 0 and outslot == -1:
+            return alttype
+        return None
+
+class TypeOpIntMult(TypeOpBinary):
+    """CPUI_INT_MULT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_MULT, "*", TYPE_INT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntDiv(TypeOpBinary):
+    """CPUI_INT_DIV — unsigned division."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_DIV, "/", TYPE_UINT, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntSdiv(TypeOpBinary):
+    """CPUI_INT_SDIV — signed division."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SDIV, "s/", TYPE_INT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntRem(TypeOpBinary):
+    """CPUI_INT_REM — unsigned remainder."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_REM, "%", TYPE_UINT, TYPE_UINT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpIntSrem(TypeOpBinary):
+    """CPUI_INT_SREM — signed remainder."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_INT_SREM, "s%", TYPE_INT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpBoolNegate(TypeOpUnary):
+    """CPUI_BOOL_NEGATE."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_BOOL_NEGATE, "!", TYPE_BOOL, TYPE_BOOL)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpBoolXor(TypeOpBinary):
+    """CPUI_BOOL_XOR."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_BOOL_XOR, "^^", TYPE_BOOL, TYPE_BOOL)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpBoolAnd(TypeOpBinary):
+    """CPUI_BOOL_AND."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_BOOL_AND, "&&", TYPE_BOOL, TYPE_BOOL)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpBoolOr(TypeOpBinary):
+    """CPUI_BOOL_OR."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_BOOL_OR, "||", TYPE_BOOL, TYPE_BOOL)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatEqual(TypeOpBinary):
+    """CPUI_FLOAT_EQUAL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_EQUAL, "f==", TYPE_BOOL, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatNotEqual(TypeOpBinary):
+    """CPUI_FLOAT_NOTEQUAL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_NOTEQUAL, "f!=", TYPE_BOOL, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatLess(TypeOpBinary):
+    """CPUI_FLOAT_LESS."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_LESS, "f<", TYPE_BOOL, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatLessEqual(TypeOpBinary):
+    """CPUI_FLOAT_LESSEQUAL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_LESSEQUAL, "f<=", TYPE_BOOL, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatNan(TypeOpUnary):
+    """CPUI_FLOAT_NAN."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_NAN, "NAN", TYPE_BOOL, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatAdd(TypeOpBinary):
+    """CPUI_FLOAT_ADD."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_ADD, "f+", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype if outslot == -1 else None
+
+class TypeOpFloatDiv(TypeOpBinary):
+    """CPUI_FLOAT_DIV."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_DIV, "f/", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatMult(TypeOpBinary):
+    """CPUI_FLOAT_MULT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_MULT, "f*", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatSub(TypeOpBinary):
+    """CPUI_FLOAT_SUB."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_SUB, "f-", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatNeg(TypeOpUnary):
+    """CPUI_FLOAT_NEG."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_NEG, "f-", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype if inslot == 0 and outslot == -1 else None
+
+class TypeOpFloatAbs(TypeOpUnary):
+    """CPUI_FLOAT_ABS."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_ABS, "ABS", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return alttype if inslot == 0 and outslot == -1 else None
+
+class TypeOpFloatSqrt(TypeOpUnary):
+    """CPUI_FLOAT_SQRT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_SQRT, "SQRT", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatInt2Float(TypeOpUnary):
+    """CPUI_FLOAT_INT2FLOAT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_INT2FLOAT, "INT2FLOAT", TYPE_FLOAT, TYPE_INT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatFloat2Float(TypeOpUnary):
+    """CPUI_FLOAT_FLOAT2FLOAT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_FLOAT2FLOAT, "FLOAT2FLOAT", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatTrunc(TypeOpUnary):
+    """CPUI_FLOAT_TRUNC."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_TRUNC, "TRUNC", TYPE_INT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatCeil(TypeOpUnary):
+    """CPUI_FLOAT_CEIL."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_CEIL, "CEIL", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatFloor(TypeOpUnary):
+    """CPUI_FLOAT_FLOOR."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_FLOOR, "FLOOR", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpFloatRound(TypeOpUnary):
+    """CPUI_FLOAT_ROUND."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_FLOAT_ROUND, "ROUND", TYPE_FLOAT, TYPE_FLOAT)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
 
 class TypeOpPiece(TypeOpFunc):
     """CPUI_PIECE — concatenation of two values."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_PIECE, "PIECE", TYPE_UNKNOWN, TYPE_UNKNOWN)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
 
 class TypeOpSubpiece(TypeOpFunc):
     """CPUI_SUBPIECE — extraction of sub-value."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_SUBPIECE, "SUBPIECE", TYPE_UNKNOWN, TYPE_UNKNOWN)
     def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
-        return None  # SUBPIECE truncation doesn't directly propagate
+        return None
 
 class TypeOpCast(TypeOp):
     """CPUI_CAST — explicit type cast."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_CAST, "CAST")
+    def getInputLocal(self, op, slot):
+        return self.tlst.getTypeVoid()
     def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
-        return None  # Cast breaks type propagation
+        return None
 
 class TypeOpPtradd(TypeOp):
     """CPUI_PTRADD — pointer + index*size."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_PTRADD, "PTRADD")
+    def getInputLocal(self, op, slot):
+        if slot == 0:
+            invn = op.getIn(0)
+            if invn is not None:
+                return self.tlst.getBase(invn.getSize(), TYPE_PTR)
+        return self.tlst.getTypeVoid()
     def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
-        if inslot == 0:  # pointer input propagates to output
+        if inslot == 0:
             return alttype
         return None
 
@@ -473,16 +832,20 @@ class TypeOpPtrsub(TypeOpBinary):
         return None
 
 class TypeOpMultiequal(TypeOp):
-    """CPUI_MULTIEQUAL — SSA phi-node, propagates type through."""
+    """CPUI_MULTIEQUAL — SSA phi-node."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_MULTIEQUAL, "MULTIEQUAL")
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
     def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
         return alttype
 
 class TypeOpIndirect(TypeOp):
-    """CPUI_INDIRECT — indirect effect, propagates type through."""
+    """CPUI_INDIRECT — indirect effect."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_INDIRECT, "INDIRECT")
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
     def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
         if inslot == 0:
             return alttype
@@ -492,26 +855,50 @@ class TypeOpSegmentOp(TypeOp):
     """CPUI_SEGMENTOP."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_SEGMENTOP, "SEGMENTOP")
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpCpoolRef(TypeOp):
     """CPUI_CPOOLREF."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_CPOOLREF, "CPOOLREF")
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpNew(TypeOp):
     """CPUI_NEW."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_NEW, "NEW")
+    def getOutputLocal(self, op):
+        return self.tlst.getTypeVoid()
 
 class TypeOpInsert(TypeOpFunc):
     """CPUI_INSERT."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_INSERT, "INSERT", TYPE_UNKNOWN, TYPE_UNKNOWN)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
 
 class TypeOpExtract(TypeOpFunc):
     """CPUI_EXTRACT."""
     def __init__(self, tlst):
         super().__init__(tlst, OpCode.CPUI_EXTRACT, "EXTRACT", TYPE_UNKNOWN, TYPE_UNKNOWN)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpPopcount(TypeOpUnary):
+    """CPUI_POPCOUNT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_POPCOUNT, "POPCOUNT", TYPE_UINT, TYPE_UNKNOWN)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
+
+class TypeOpLzcount(TypeOpUnary):
+    """CPUI_LZCOUNT."""
+    def __init__(self, tlst):
+        super().__init__(tlst, OpCode.CPUI_LZCOUNT, "LZCOUNT", TYPE_UINT, TYPE_UNKNOWN)
+    def propagateType(self, alttype, op, invn, outvn, inslot, outslot):
+        return None
 
 
 def registerTypeOps(tlst: TypeFactory, trans=None) -> List[Optional[TypeOp]]:

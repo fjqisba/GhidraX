@@ -67,6 +67,12 @@ class PreferSplitRecord:
             return 0
         return self.totalSize // self.splitSize
 
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
     def __lt__(self, other) -> bool:
         if not isinstance(other, PreferSplitRecord):
             return NotImplemented
@@ -124,6 +130,9 @@ class PreferSplitManager:
 
     def numRecords(self) -> int:
         return len(self._records)
+
+    def getRecords(self) -> list:
+        return self._records
 
     def clear(self) -> None:
         self._records.clear()
