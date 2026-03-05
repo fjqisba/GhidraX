@@ -134,6 +134,12 @@ class PreferSplitManager:
     def getRecords(self) -> list:
         return self._records
 
+    def decode(self, decoder) -> None:
+        pass
+
+    def encode(self, encoder) -> None:
+        pass
+
     def clear(self) -> None:
         self._records.clear()
         self._tempsplits.clear()

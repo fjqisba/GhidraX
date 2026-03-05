@@ -167,6 +167,12 @@ class StringManagerUnicode(StringManager):
             return self.glb.translate.isBigEndian() if hasattr(self.glb.translate, 'isBigEndian') else False
         return False
 
+    def isUTF8(self) -> bool:
+        return True
+
+    def getGlb(self):
+        return self.glb
+
     def readString(self, addr: Address, charType: Datatype) -> Optional[str]:
         """Read a string from the load image, returning None if not a string."""
         data, trunc = self.getStringData(addr, charType)

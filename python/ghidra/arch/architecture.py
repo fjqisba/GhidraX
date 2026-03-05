@@ -496,6 +496,18 @@ class Architecture(AddrSpaceManager):
         """Read specific register properties."""
         pass
 
+    def decode(self, decoder) -> None:
+        """Decode architecture configuration from a stream."""
+        pass
+
+    def getTypes(self):
+        """Get the type factory."""
+        return self.types
+
+    def getSymbolDatabase(self):
+        """Get the symbol database factory."""
+        return self.symboltab
+
     def printMessage(self, message: str) -> None:
         """Print an error message to console."""
         print(f"[Architecture] {message}")

@@ -323,6 +323,9 @@ class Cover:
             if uind > stop_ind:
                 cb.setEnd(ref)
 
+    def getNumBlocks(self) -> int:
+        return len(self._cover)
+
     def __iter__(self):
         return iter(self._cover.items())
 

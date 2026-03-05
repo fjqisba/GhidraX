@@ -36,6 +36,7 @@ class UserPcodeOp:
     def extractAnnotationSize(self, vn, op): return 0
     def setIndex(self, ind: int) -> None: self.useropindex = ind
     def setDisplay(self, flags: int) -> None: self.flags = (self.flags & ~7) | (flags & 7)
+    def getType(self) -> int: return self.type
     def encode(self, encoder) -> None: pass
     def decode(self, decoder) -> None: pass
 
@@ -148,6 +149,9 @@ class SegmentOp(UserPcodeOp):
     def getInnerSize(self) -> int:
         return self.innerinsize
 
+    def getInjectId(self) -> int:
+        return self.injectId
+
     def decode(self, decoder) -> None:
         pass
 
@@ -176,6 +180,12 @@ class JumpAssistOp(UserPcodeOp):
     def getDefaultAddr(self) -> int:
         return self.defaultaddr
 
+    def setIndex2Addr(self, val: int) -> None:
+        self.index2addr = val
+
+    def setCalcSize(self, val: int) -> None:
+        self.calcsize = val
+
     def decode(self, decoder) -> None:
         pass
 
@@ -200,3 +210,9 @@ class DatatypeUserOp(UserPcodeOp):
         if slot < len(self.inTypes):
             return self.inTypes[slot]
         return None
+
+    def getInTypes(self) -> list:
+        return self.inTypes
+
+    def setOutType(self, t) -> None:
+        self.outType = t

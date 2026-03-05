@@ -55,6 +55,15 @@ class ArraySequence:
     def getRootOp(self):
         return self.rootOp
 
+    def getBlock(self):
+        return self.block
+
+    def setBlock(self, bl) -> None:
+        self.block = bl
+
+    def getMoveOps(self) -> List[WriteNode]:
+        return self.moveOps
+
     @staticmethod
     def interfereBetween(startOp, endOp) -> bool:
         """Check for interfering ops between two given ops."""
@@ -125,6 +134,9 @@ class StringSequence(ArraySequence):
     def getRootAddr(self) -> Address:
         return self.rootAddr
 
+    def getEntry(self):
+        return self.entry
+
     def getString(self) -> str:
         return ''.join(chr(b) if 0x20 <= b < 0x7f else '.' for b in self.byteValues)
 
@@ -180,6 +192,9 @@ class HeapSequence(ArraySequence):
 
     def getBasePointer(self):
         return self.basePointer
+
+    def getStoreSpace(self):
+        return self.storeSpace
 
     def findBasePointer(self, initPtr) -> None:
         """Find the base pointer for the sequence."""

@@ -54,6 +54,12 @@ class Comment:
     def getText(self) -> str:
         return self.text
 
+    def setText(self, txt: str) -> None:
+        self.text = txt
+
+    def encode(self, encoder) -> None:
+        pass
+
     @staticmethod
     def encodeCommentType(name: str) -> int:
         _map = {"user1": 1, "user2": 2, "user3": 4, "header": 8,
@@ -130,6 +136,12 @@ class CommentDatabaseInternal(CommentDatabase):
 
     def getComments(self, fad: Address) -> List[Comment]:
         return self._comments.get(self._key(fad), [])
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
 
     def beginComment(self, fad: Address):
         return iter(self.getComments(fad))

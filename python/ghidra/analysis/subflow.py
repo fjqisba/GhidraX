@@ -23,6 +23,9 @@ class ReplaceVarnode:
         self.val: int = 0
         self.defop = None
 
+    def getVarnode(self): return self.vn
+    def getReplacement(self): return self.replacement
+
 
 class ReplaceOp:
     """Placeholder for a PcodeOp operating on smaller logical values."""
@@ -35,6 +38,10 @@ class ReplaceOp:
         self.numparams: int = nparams
         self.output: Optional[ReplaceVarnode] = None
         self.input: List[ReplaceVarnode] = []
+
+    def getOp(self): return self.op
+    def getReplacement(self): return self.replacement
+    def getOpcode(self): return self.opc
 
 
 class PatchRecord:
@@ -233,6 +240,12 @@ class SubvariableFlow:
     def getReplacementCount(self) -> int:
         return len(self._replace)
 
+    def getFlowSize(self) -> int:
+        return self._flowsize
+
+    def getAggregateSize(self) -> int:
+        return self._aggregatesize if hasattr(self, '_aggregatesize') else 0
+
     def getOpCount(self) -> int:
         return len(self._oplist)
 
@@ -250,6 +263,9 @@ class SplitFlow:
         self._root = root
         self._lowSize: int = lowSize
         self._worklist: list = []
+
+    def getLowSize(self) -> int:
+        return self._lowSize
 
     def doTrace(self) -> bool:
         """Trace split through data-flow, constructing transform."""

@@ -24,6 +24,12 @@ class FloatingEdge:
     def getBottom(self):
         return self.bottom
 
+    def setTop(self, t) -> None:
+        self.top = t
+
+    def setBottom(self, b) -> None:
+        self.bottom = b
+
     def getCurrentEdge(self, outedge_ref: list, graph):
         """Get the current form of the edge.
 
@@ -249,6 +255,12 @@ class TraceDAG:
     def setFinishBlock(self, bl):
         self._finishblock = bl
 
+    def getFinishBlock(self):
+        return self._finishblock
+
+    def getRootList(self) -> list:
+        return self._rootlist
+
     def initialize(self):
         """Create the initial BranchPoint and BlockTrace objects."""
         pass  # Complex initialization
@@ -298,6 +310,12 @@ class ConditionalJoin:
         self._exita = None
         self._exitb = None
         self._joinblock = None
+
+    def getBlock1(self):
+        return self._block1
+
+    def getBlock2(self):
+        return self._block2
 
 
 class CollapseStructure:
@@ -557,6 +575,9 @@ class CollapseStructure:
         """Mark edges between root components as unstructured gotos."""
         return False
 
+    def getGraph(self):
+        return self._graph
+
     def execute(self):
         """Run one pass of structure collapsing. Returns True if changes made."""
         if not self._graph:
@@ -595,6 +616,9 @@ class ActionStructureTransform:
     def apply(self, data) -> int:
         return 0
 
+    def reset(self, data) -> None:
+        pass
+
 
 class ActionNormalizeBranches:
     """Flip conditional control-flow so that preferred comparison operators are used."""
@@ -614,6 +638,9 @@ class ActionNormalizeBranches:
     def apply(self, data) -> int:
         return 0
 
+    def reset(self, data) -> None:
+        pass
+
 
 class ActionPreferComplement:
     """Attempt to normalize symmetric block structures."""
@@ -632,6 +659,9 @@ class ActionPreferComplement:
 
     def apply(self, data) -> int:
         return 0
+
+    def reset(self, data) -> None:
+        pass
 
 
 class ActionBlockStructure:
@@ -657,6 +687,9 @@ class ActionBlockStructure:
         cs.collapseAll()
         return cs.getChangeCount()
 
+    def reset(self, data) -> None:
+        pass
+
 
 class ActionFinalStructure:
     """Perform final organization of the control-flow structure."""
@@ -675,6 +708,9 @@ class ActionFinalStructure:
 
     def apply(self, data) -> int:
         return 0
+
+    def reset(self, data) -> None:
+        pass
 
 
 class ActionReturnSplit:
@@ -695,6 +731,9 @@ class ActionReturnSplit:
     def apply(self, data) -> int:
         return 0
 
+    def reset(self, data) -> None:
+        pass
+
 
 class ActionNodeJoin:
     """Look for conditional branch expressions that have been split and rejoin them."""
@@ -713,3 +752,6 @@ class ActionNodeJoin:
 
     def apply(self, data) -> int:
         return 0
+
+    def reset(self, data) -> None:
+        pass

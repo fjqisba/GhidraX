@@ -205,5 +205,17 @@ class DynamicHash:
                 seen.add(vid)
                 i += 1
 
+    def getVnEdges(self) -> list:
+        return self._vnedge
+
+    def getOpEdges(self) -> list:
+        return self._opedge
+
+    def getMarkOps(self) -> list:
+        return self._markop
+
+    def getSlotIndex(self) -> int:
+        return self._slot if hasattr(self, '_slot') else -1
+
     def __repr__(self) -> str:
         return f"DynamicHash(hash=0x{self._hash:x})"

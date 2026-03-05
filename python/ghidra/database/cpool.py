@@ -61,6 +61,15 @@ class CPoolRecord:
     def isDestructor(self) -> bool:
         return (self.flags & CPoolRecord.is_destructor) != 0
 
+    def getFlags(self) -> int:
+        return self.flags
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
 
 class ConstantPool(ABC):
     """An interface to the pool of constant objects for byte-code languages."""
@@ -107,3 +116,12 @@ class ConstantPoolInternal(ConstantPool):
 
     def clear(self) -> None:
         self._pool.clear()
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
+    def size(self) -> int:
+        return len(self._pool)

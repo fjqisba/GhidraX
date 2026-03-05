@@ -1248,6 +1248,59 @@ class Funcdata:
             return self.newConstant(addr.getAddrSize(), addr.getOffset())
         return self.newVarnode(addr.getAddrSize(), Address(spc, addr.getOffset()))
 
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
+    def getCallSpecs(self, i: int):
+        if 0 <= i < len(self._qlst):
+            return self._qlst[i]
+        return None
+
+    def numCallSpecs(self) -> int:
+        return len(self._qlst)
+
+    def getJumpTable(self, i: int):
+        if 0 <= i < len(self._jumpvec):
+            return self._jumpvec[i]
+        return None
+
+    def numJumpTables(self) -> int:
+        return len(self._jumpvec)
+
+    def getHighCount(self) -> int:
+        return self._highcount if hasattr(self, '_highcount') else 0
+
+    def setHighCount(self, val: int) -> None:
+        self._highcount = val
+
+    def warningHeader(self, txt: str) -> None:
+        if hasattr(self, '_warnings'):
+            self._warnings.append(txt)
+
+    def hasMutualExclusion(self) -> bool:
+        return False
+
+    def getMinimumLanedSize(self) -> int:
+        return self._minLanedSize if hasattr(self, '_minLanedSize') else 0
+
+    def setMinimumLanedSize(self, val: int) -> None:
+        self._minLanedSize = val
+
+    def getDecompileMaxInstructions(self) -> int:
+        return self._decomp_max_inst if hasattr(self, '_decomp_max_inst') else 0
+
+    def setDecompileMaxInstructions(self, val: int) -> None:
+        self._decomp_max_inst = val
+
+    def getRestartPending(self) -> bool:
+        return self._restart_pending if hasattr(self, '_restart_pending') else False
+
+    def getMaxOpcodeIndex(self) -> int:
+        return self._maxopcodeindex if hasattr(self, '_maxopcodeindex') else 0
+
     # --- Print / debug ---
 
     def printRaw(self) -> str:

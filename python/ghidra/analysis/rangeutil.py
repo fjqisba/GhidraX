@@ -614,6 +614,21 @@ class ValueSet:
     def addLandmark(self, typeCode: int, constraint: CircleRange) -> None:
         self.addEquation(self.numParams, typeCode, constraint)
 
+    def getNext(self):
+        return self.next
+
+    def setNext(self, n) -> None:
+        self.next = n
+
+    def getPartHead(self):
+        return self.partHead
+
+    def setPartHead(self, p) -> None:
+        self.partHead = p
+
+    def getEquations(self) -> list:
+        return self.equations
+
     def printRaw(self) -> str:
         return f"ValueSet({self.range.printRaw()}, type={self.typeCode})"
 
@@ -664,6 +679,12 @@ class ValueSetRead:
             self.leftIsStable = vs.leftIsStable
             self.rightIsStable = vs.rightIsStable
 
+    def getSlot(self) -> int:
+        return self.slot
+
+    def getOp(self):
+        return self.op
+
     def printRaw(self) -> str:
         return f"ValueSetRead({self.range.printRaw()})"
 
@@ -696,6 +717,9 @@ class Partition:
         self.stopNode = None
         self.isDirty = False
 
+    def isDirtyFlag(self) -> bool:
+        return self.isDirty
+
 
 class Widener:
     """Class holding a particular widening strategy for the ValueSetSolver iteration."""
@@ -708,6 +732,9 @@ class Widener:
 
     def doWidening(self, valueSet: ValueSet, rng: CircleRange, newRange: CircleRange) -> bool:
         return False
+
+    def getWidenCount(self) -> int:
+        return 0
 
 
 class WidenerFull(Widener):
@@ -816,3 +843,9 @@ class ValueSetSolver:
 
     def endValueSetReads(self):
         return None
+
+    def getNumValueSets(self) -> int:
+        return len(self._valueNodes)
+
+    def getNumReads(self) -> int:
+        return len(self._readNodes)

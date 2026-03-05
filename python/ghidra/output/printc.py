@@ -2621,6 +2621,181 @@ class PrintC(PrintLanguage):
         self._emit.print(dispnm)
         self._emit.print(self.SEMICOLON)
 
+    def emitBlockDispatch(self, bl) -> None:
+        pass
+
+    def emitBlockCopy(self, bl) -> None:
+        if bl is not None and hasattr(bl, 'getRef'):
+            ref = bl.getRef()
+            if ref is not None and hasattr(ref, 'emit'):
+                ref.emit(self)
+
+    def emitBlockInfLoop(self, bl) -> None:
+        if self._emit is None:
+            return
+        self._emit.tagLine()
+        self._emit.print("while", SyntaxHighlight.keyword_color)
+        self._emit.print("(true)")
+        self._emit.spaces(1)
+        self._emit.print("{")
+        if bl is not None and hasattr(bl, 'getBlock'):
+            body = bl.getBlock(0)
+            if body is not None and hasattr(body, 'emit'):
+                body.emit(self)
+        self._emit.tagLine()
+        self._emit.print("}")
+
+    def emitBlockDoWhile(self, bl) -> None:
+        if self._emit is None:
+            return
+        self._emit.tagLine()
+        self._emit.print("do", SyntaxHighlight.keyword_color)
+        self._emit.spaces(1)
+        self._emit.print("{")
+        if bl is not None and hasattr(bl, 'getBlock'):
+            body = bl.getBlock(0)
+            if body is not None and hasattr(body, 'emit'):
+                body.emit(self)
+        self._emit.tagLine()
+        self._emit.print("}")
+        self._emit.spaces(1)
+        self._emit.print("while", SyntaxHighlight.keyword_color)
+        self._emit.print("(...)")
+        self._emit.print(";")
+
+    def emitBlockCondition(self, bl) -> None:
+        if bl is not None and hasattr(bl, 'getBlock'):
+            b0 = bl.getBlock(0)
+            if b0 is not None and hasattr(b0, 'emit'):
+                b0.emit(self)
+
+    def emitBlockSwitch(self, bl) -> None:
+        if self._emit is None:
+            return
+        self._emit.tagLine()
+        self._emit.print("switch", SyntaxHighlight.keyword_color)
+        self._emit.print("(...)")
+        self._emit.spaces(1)
+        self._emit.print("{")
+        self._emit.print("}")
+
+    def emitBlockLs(self, bl) -> None:
+        if bl is None:
+            return
+        for i in range(bl.getSize()):
+            sub = bl.getBlock(i)
+            if sub is not None and hasattr(sub, 'emit'):
+                sub.emit(self)
+
+    def emitBlockIf(self, bl) -> None:
+        if self._emit is None:
+            return
+        self._emit.tagLine()
+        self._emit.print("if", SyntaxHighlight.keyword_color)
+        self._emit.print("(...)")
+        self._emit.spaces(1)
+        self._emit.print("{")
+        self._emit.print("}")
+
+    def emitBlockGoto(self, bl) -> None:
+        if self._emit is None:
+            return
+        if bl is not None and hasattr(bl, 'getBlock'):
+            body = bl.getBlock(0)
+            if body is not None and hasattr(body, 'emit'):
+                body.emit(self)
+        if bl is not None and hasattr(bl, 'gotoPrints') and bl.gotoPrints():
+            self._emit.tagLine()
+            self._emit.print("goto", SyntaxHighlight.keyword_color)
+            self._emit.print(";")
+
+    def emitBlockWhileDo(self, bl) -> None:
+        if self._emit is None:
+            return
+        self._emit.tagLine()
+        self._emit.print("while", SyntaxHighlight.keyword_color)
+        self._emit.print("(...)")
+        self._emit.spaces(1)
+        self._emit.print("{")
+        self._emit.print("}")
+
+    def opHiddenFunc(self, op) -> None:
+        pass
+
+    def getHeaderComment(self, fd) -> str:
+        return ""
+
+    def getDefaultCast(self):
+        return self._castStrategy
+
+    def adjustTypeOperators(self) -> None:
+        pass
+
+    def setMarkup(self, markup) -> None:
+        self._markup = markup
+
+    def opUnimplemented(self, op) -> None:
+        self.pushOp(self.function_call, op)
+        self.pushAtom(Atom("UNIMPLEMENTED", functoken, SyntaxHighlight.funcname_color, op))
+
+    def opPieceMerge(self, op) -> None:
+        self.pushOp(self.function_call, op)
+        self.pushAtom(Atom("CONCAT", functoken, SyntaxHighlight.funcname_color, op))
+
+    def opLzcount(self, op) -> None:
+        self.pushOp(self.function_call, op)
+        self.pushAtom(Atom("LZCOUNT", functoken, SyntaxHighlight.funcname_color, op))
+        in0 = op.getIn(0)
+        self.pushVn(in0, op, self._mods)
+
+    def opPopcount(self, op) -> None:
+        self.pushOp(self.function_call, op)
+        self.pushAtom(Atom("POPCOUNT", functoken, SyntaxHighlight.funcname_color, op))
+        in0 = op.getIn(0)
+        self.pushVn(in0, op, self._mods)
+
+    def opCpoolRef(self, op) -> None:
+        self.pushOp(self.function_call, op)
+        self.pushAtom(Atom("CPOOL", functoken, SyntaxHighlight.funcname_color, op))
+
+    def opNew(self, op) -> None:
+        self.pushOp(self.function_call, op)
+        self.pushAtom(Atom("new", functoken, SyntaxHighlight.keyword_color, op))
+
+    def emitTypeNameToken(self, ct, op=None) -> None:
+        if self._emit is None or ct is None:
+            return
+        nm = ct.getDisplayName() if hasattr(ct, 'getDisplayName') else str(ct)
+        self._emit.print(nm, SyntaxHighlight.type_color)
+
+    def emitPrototypeReturnType(self, proto) -> None:
+        if proto is None or self._emit is None:
+            return
+        outtype = proto.getOutputType() if hasattr(proto, 'getOutputType') else None
+        if outtype is not None:
+            self.emitTypeNameToken(outtype)
+            self._emit.spaces(1)
+
+    def emitCommentLine(self, text: str) -> None:
+        if self._emit is None:
+            return
+        self._emit.tagLine()
+        self._emit.print("// ", SyntaxHighlight.comment_color)
+        self._emit.print(text, SyntaxHighlight.comment_color)
+
+    def checkForLabelOverride(self, op) -> bool:
+        return False
+
+    def isSetToken(self) -> bool:
+        return len(self._nodepend) > 0 if hasattr(self, '_nodepend') else False
+
+    def opExtractOp(self, op) -> None:
+        self.pushOp(self.function_call, op)
+        self.pushAtom(Atom("EXTRACT", functoken, SyntaxHighlight.funcname_color, op))
+
+    def emitGlobalVarDeclsAsComments(self, fd) -> None:
+        pass
+
     def emitEnumDefinition(self, ct):
         """Emit an enum type definition: typedef enum { ... } Name;"""
         if ct is None or self._emit is None:

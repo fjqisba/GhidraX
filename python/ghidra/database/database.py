@@ -339,8 +339,14 @@ class FunctionSymbol(Symbol):
     def getFunction(self):
         return self.fd
 
+    def setFunction(self, fd) -> None:
+        self.fd = fd
+
     def getBytesConsumed(self) -> int:
         return self.consumeSize
+
+    def setBytesConsumed(self, sz: int) -> None:
+        self.consumeSize = sz
 
 
 # =========================================================================
@@ -361,6 +367,9 @@ class EquateSymbol(Symbol):
     def getValue(self) -> int:
         return self.value
 
+    def setValue(self, val: int) -> None:
+        self.value = val
+
 
 # =========================================================================
 # LabSymbol
@@ -371,6 +380,9 @@ class LabSymbol(Symbol):
 
     def __init__(self, scope: Optional[Scope] = None, name: str = "") -> None:
         super().__init__(scope, name)
+
+    def getType(self) -> int:
+        return 4  # label type
 
 
 # =========================================================================
@@ -388,6 +400,9 @@ class ExternRefSymbol(Symbol):
     def getRefAddr(self) -> Address:
         return self.refaddr
 
+    def setRefAddr(self, addr: Address) -> None:
+        self.refaddr = addr
+
 
 # =========================================================================
 # DuplicateFunctionError
@@ -400,6 +415,12 @@ class DuplicateFunctionError(RecovError):
         super().__init__("Duplicate Function")
         self.address: Address = addr
         self.functionName: str = nm
+
+    def getAddress(self) -> Address:
+        return self.address
+
+    def getFunctionName(self) -> str:
+        return self.functionName
 
 
 # =========================================================================
@@ -487,6 +508,12 @@ class Scope(ABC):
 
     def isGlobal(self) -> bool:
         return self.parent is None or self.fd is None
+
+    def setOwner(self, owner) -> None:
+        self.owner = owner
+
+    def getOwner(self):
+        return self.owner
 
     def __repr__(self) -> str:
         return f"Scope({self.name!r}, id={self.uniqueId:#x})"
@@ -726,6 +753,12 @@ class ScopeInternal(Scope):
     def decode(self, decoder) -> None:
         pass
 
+    def getNumSymbols(self) -> int:
+        return len(self._symbolsById)
+
+    def getNextSymbolId(self) -> int:
+        return self._nextSymId
+
 
 # =========================================================================
 # Database
@@ -798,6 +831,15 @@ class Database:
     def clear(self) -> None:
         self._scopeMap.clear()
         self._globalScope = None
+
+    def getNumScopes(self) -> int:
+        return len(self._scopeMap)
+
+    def getArch(self):
+        return self.glb
+
+    def getScopeMap(self) -> dict:
+        return self._scopeMap
 
     def __repr__(self) -> str:
         n = len(self._scopeMap)

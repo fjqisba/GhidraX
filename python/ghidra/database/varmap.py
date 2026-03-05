@@ -28,6 +28,8 @@ class NameRecommend:
     def getName(self) -> str: return self.name
     def getSymbolId(self) -> int: return self.symbolId
     def setName(self, nm: str) -> None: self.name = nm
+    def setSize(self, sz: int) -> None: self.size = sz
+    def setAddr(self, a: Address) -> None: self.addr = a
 
 
 class DynamicRecommend:
@@ -45,6 +47,7 @@ class DynamicRecommend:
     def getName(self) -> str: return self.name
     def getSymbolId(self) -> int: return self.symbolId
     def setName(self, nm: str) -> None: self.name = nm
+    def setHash(self, h: int) -> None: self.hash = h
 
 
 class TypeRecommend:
@@ -57,6 +60,7 @@ class TypeRecommend:
     def getAddress(self) -> Address: return self.addr
     def getType(self): return self.dataType
     def setType(self, dt) -> None: self.dataType = dt
+    def setAddress(self, a: Address) -> None: self.addr = a
 
 
 class RangeHint:
@@ -82,6 +86,10 @@ class RangeHint:
     def getRangeType(self) -> int: return self.type
     def getHighIndex(self) -> int: return self.highind
     def setHighIndex(self, val: int) -> None: self.highind = val
+    def getFlags(self) -> int: return self.flags
+    def setFlags(self, f: int) -> None: self.flags = f
+    def getHighStop(self) -> int: return self.highstop
+    def setHighStop(self, val: int) -> None: self.highstop = val
 
     def absorb(self, other: 'RangeHint') -> bool:
         if self.sstart + self.size == other.sstart:
@@ -335,4 +343,16 @@ class ScopeLocal(ScopeInternal):
 
     def decode(self, decoder) -> None:
         """Decode this scope from a stream."""
+        pass
+
+    def getNameRecommends(self) -> list:
+        return self._nameRecommend
+
+    def getDynRecommends(self) -> list:
+        return self._dynRecommend
+
+    def getTypeRecommends(self) -> list:
+        return self._typeRecommend
+
+    def resetLocalWindows(self) -> None:
         pass

@@ -1065,6 +1065,9 @@ class Merge:
                 self.markRedundantCopies(high, copyIns, pos, sz)
             pos += sz
 
+    def getTestCount(self) -> int:
+        return self._testcount if hasattr(self, '_testcount') else 0
+
     def collectInputs(self, high: HighVariable, oplist: list, op: PcodeOp) -> None:
         """Collect Varnode instances from a HighVariable that are inputs to a given PcodeOp."""
         while True:

@@ -274,6 +274,27 @@ class HeritageInfo:
     def isHeritaged(self) -> bool:
         return self.space is not None
 
+    def getSpace(self) -> Optional[AddrSpace]:
+        return self.space
+
+    def getDelay(self) -> int:
+        return self.delay
+
+    def getDeadcodeDelay(self) -> int:
+        return self.deadcodedelay
+
+    def isWarningIssued(self) -> bool:
+        return self.warningissued
+
+    def setWarningIssued(self, val: bool) -> None:
+        self.warningissued = val
+
+    def isLoadGuardSearch(self) -> bool:
+        return self.loadGuardSearch
+
+    def setLoadGuardSearch(self, val: bool) -> None:
+        self.loadGuardSearch = val
+
     def reset(self) -> None:
         self.deadremoved = 0
         if self.space is not None:

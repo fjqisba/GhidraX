@@ -39,6 +39,12 @@ class InjectPayload:
     def isIncidentalCopy(self) -> bool:
         return self.incidentalcopy
 
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
 
 class InjectContext:
     """Context for a particular p-code injection site."""
@@ -49,6 +55,10 @@ class InjectContext:
         self.calladdr: Address = Address()
         self.inputlist: list = []
         self.output: list = []
+
+    def clear(self) -> None:
+        self.inputlist.clear()
+        self.output.clear()
 
 
 class PcodeInjectLibrary:
@@ -117,6 +127,9 @@ class PcodeInjectLibrary:
         """Manually register a call fixup from a p-code snippet."""
         payload = InjectPayload(useropname, InjectPayload.CALLFIXUP_TYPE)
         return self.registerPayload(payload)
+
+    def getExePcodeId(self, nm: str) -> int:
+        return self._exePcodeMap.get(nm, -1)
 
     def manualCallOtherFixup(self, useropname: str, outname: str,
                              inname: list, snippet: str) -> int:

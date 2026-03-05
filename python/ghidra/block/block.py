@@ -31,6 +31,13 @@ class BlockEdge:
         self.point: Optional[FlowBlock] = pt
         self.reverse_index: int = rev
 
+    def getLabel(self) -> int: return self.label
+    def getPoint(self): return self.point
+    def getReverseIndex(self) -> int: return self.reverse_index
+    def setLabel(self, lab: int) -> None: self.label = lab
+    def setPoint(self, pt) -> None: self.point = pt
+    def setReverseIndex(self, rev: int) -> None: self.reverse_index = rev
+
 
 # =========================================================================
 # FlowBlock
@@ -689,6 +696,9 @@ class BlockCopy(FlowBlock):
     def subBlock(self, i: int):
         return self._ref if i == 0 else None
 
+    def setRef(self, bl) -> None:
+        self._ref = bl
+
     def emit(self, lng) -> None:
         lng.emitBlockCopy(self)
 
@@ -721,6 +731,9 @@ class BlockGoto(FlowBlock):
         """Check if the goto actually needs to be printed."""
         return self._gotoTarget is not None
 
+    def setGotoTarget(self, tgt) -> None:
+        self._gotoTarget = tgt
+
     def emit(self, lng) -> None:
         lng.emitBlockGoto(self)
 
@@ -749,6 +762,9 @@ class BlockCondition(FlowBlock):
 
     def getSize(self) -> int:
         return 2
+
+    def setOpcode(self, opc: int) -> None:
+        self._opc = opc
 
     def emit(self, lng) -> None:
         lng.emitBlockCondition(self)
@@ -824,6 +840,9 @@ class BlockWhileDo(FlowBlock):
     def getIterateOp(self):
         return self._iterateOp
 
+    def setInitializeOp(self, op) -> None:
+        self._initializeOp = op
+
     def emit(self, lng) -> None:
         lng.emitBlockWhileDo(self)
 
@@ -844,6 +863,9 @@ class BlockDoWhile(FlowBlock):
     def getSize(self) -> int:
         return 1
 
+    def setBody(self, bl) -> None:
+        self._bodyBlock = bl
+
     def emit(self, lng) -> None:
         lng.emitBlockDoWhile(self)
 
@@ -863,6 +885,9 @@ class BlockInfLoop(FlowBlock):
 
     def getSize(self) -> int:
         return 1
+
+    def setBody(self, bl) -> None:
+        self._bodyBlock = bl
 
     def emit(self, lng) -> None:
         lng.emitBlockInfLoop(self)
@@ -938,6 +963,9 @@ class BlockList(FlowBlock):
 
     def getBlock(self, i: int) -> FlowBlock:
         return self._blockList[i]
+
+    def addBlock(self, bl) -> None:
+        self._blockList.append(bl)
 
     def emit(self, lng) -> None:
         lng.emitBlockLs(self)

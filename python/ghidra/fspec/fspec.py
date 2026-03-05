@@ -27,7 +27,9 @@ if TYPE_CHECKING:
 
 class ParamUnassignedError(LowlevelError):
     """Exception thrown when a prototype can't be modeled properly."""
-    pass
+
+    def getMessage(self) -> str:
+        return str(self)
 
 
 class EffectRecord:
@@ -58,6 +60,15 @@ class EffectRecord:
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
+
+    def setType(self, tp: int) -> None:
+        self._type = tp
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
 
     @staticmethod
     def compareByAddress(op1, op2) -> bool:
@@ -271,6 +282,12 @@ class ScoreProtoModel:
     def getNumMismatch(self) -> int:
         return self._mismatch
 
+    def getModel(self):
+        return self._model
+
+    def getEntries(self) -> list:
+        return self._entries
+
 
 class UnknownProtoModel:
     """An unrecognized prototype model that adopts placeholder behavior."""
@@ -286,6 +303,12 @@ class UnknownProtoModel:
 
     def isUnknown(self) -> bool:
         return True
+
+    def setName(self, nm: str) -> None:
+        self._name = nm
+
+    def encode(self, encoder) -> None:
+        pass
 
 
 class ProtoModelMerged:
@@ -323,6 +346,12 @@ class ProtoModelMerged:
 
     def isMerged(self) -> bool:
         return True
+
+    def getGlb(self):
+        return self._glb
+
+    def clearModels(self) -> None:
+        self._modellist.clear()
 
 
 # =========================================================================
@@ -406,6 +435,23 @@ class ParamEntry:
         end2 = addr.getOffset() + sz
         return not (addr.getOffset() >= end1 or self.addressbase >= end2)
 
+    def getNumSlots(self) -> int:
+        return self.numslots
+
+    def isLeftJustified(self) -> bool:
+        return (self.flags & ParamEntry.force_left_justify) != 0
+
+    def justifiedContain(self, addr: Address, sz: int) -> int:
+        if not self.containedBy(addr, sz):
+            return -1
+        return addr.getOffset() - self.addressbase
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
 
 # =========================================================================
 # ParamList (abstract)
@@ -440,6 +486,24 @@ class ParamListStandard(ParamList):
 
     def addEntry(self, e: ParamEntry) -> None:
         self.entry.append(e)
+
+    def getSpacebase(self):
+        return self.spacebase
+
+    def getMaxDelay(self) -> int:
+        return self.maxdelay
+
+    def getPointerMax(self) -> int:
+        return self.pointermax
+
+    def possibleParam(self, loc, size: int) -> bool:
+        for e in self.entry:
+            if e.containedBy(loc, size):
+                return True
+        return False
+
+    def fillinMap(self, active) -> None:
+        pass
 
 
 # =========================================================================
@@ -636,6 +700,21 @@ class ProtoModel:
     def getKilledByCall(self) -> List[VarnodeData]:
         return self.killedbycall
 
+    def getLikelyTrash(self) -> List[VarnodeData]:
+        return self.likelytrash
+
+    def getInternalStorage(self) -> List[VarnodeData]:
+        return self.internalStorage
+
+    def numEffects(self) -> int:
+        return len(getattr(self, '_effectlist', []))
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
     def __repr__(self) -> str:
         return f"ProtoModel({self.name!r})"
 
@@ -653,6 +732,21 @@ class ParameterPieces:
         self.name: str = ""
         self.flags: int = 0
 
+    def getType(self):
+        return self.type
+
+    def getAddress(self) -> Address:
+        return self.addr
+
+    def getName(self) -> str:
+        return self.name
+
+    def getFlags(self) -> int:
+        return self.flags
+
+    def setFlags(self, fl: int) -> None:
+        self.flags = fl
+
 
 class PrototypePieces:
     """Raw pieces of a function prototype."""
@@ -665,6 +759,21 @@ class PrototypePieces:
         self.outtype: Optional[Datatype] = None
         self.dotdotdot: bool = False
         self.firstVarArgSlot: int = -1
+
+    def getModel(self):
+        return self.model
+
+    def getName(self) -> str:
+        return self.name
+
+    def getOuttype(self):
+        return self.outtype
+
+    def getNumInputs(self) -> int:
+        return len(self.intypes)
+
+    def isDotdotdot(self) -> bool:
+        return self.dotdotdot
 
 
 # =========================================================================
@@ -701,6 +810,23 @@ class ProtoParameter:
     def isNameLocked(self) -> bool:
         from ghidra.ir.varnode import Varnode
         return (self.flags & Varnode.namelock) != 0
+
+    def setName(self, nm: str) -> None:
+        self.name = nm
+
+    def setType(self, tp) -> None:
+        self.type = tp
+
+    def setAddress(self, addr: Address) -> None:
+        self.addr = addr
+
+    def setSize(self, sz: int) -> None:
+        self.size = sz
+
+    def clone(self):
+        p = ProtoParameter(self.name, self.type, self.addr, self.size)
+        p.flags = self.flags
+        return p
 
 
 # =========================================================================
@@ -1106,6 +1232,21 @@ class FuncProto:
         self.extrapop = other.extrapop
         self.injectId = other.injectId
 
+    def setCustomStorage(self, val: bool) -> None:
+        if val:
+            self.flags |= FuncProto.custom_storage
+        else:
+            self.flags &= ~FuncProto.custom_storage
+
+    def setVoidInputLock(self, val: bool) -> None:
+        if val:
+            self.flags |= FuncProto.voidinputlock
+        else:
+            self.flags &= ~FuncProto.voidinputlock
+
+    def getFlags(self) -> int:
+        return self.flags
+
     def __repr__(self) -> str:
         model_name = self.model.getName() if self.model else "?"
         return f"FuncProto(model={model_name}, params={len(self.store)})"
@@ -1473,6 +1614,12 @@ class FuncCallSpecs:
     def getFspecFromConst(addr):
         """Retrieve the FuncCallSpecs from an encoded constant address."""
         return None
+
+    def getProtoModel(self):
+        return self.proto.getModel()
+
+    def isInputLocked(self) -> bool:
+        return self.proto.isInputLocked()
 
     def __repr__(self) -> str:
         return f"FuncCallSpecs({self.name!r} @ {self.entryaddress})"
