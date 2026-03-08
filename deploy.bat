@@ -42,6 +42,15 @@ if not exist "%SRC_DIR%python\ghidra" (
     goto :error
 )
 
+:: --- Check sleigh_native.pyd ---
+set "_PYD_FOUND=0"
+for %%f in ("%SRC_DIR%python\ghidra\sleigh\sleigh_native*.pyd") do set "_PYD_FOUND=1"
+if "!_PYD_FOUND!"=="0" (
+    echo [WARN] sleigh_native.pyd not found. Run cpp\build.bat first to compile it.
+    echo        Deployment will continue without the native SLEIGH module.
+    echo.
+)
+
 :: --- Create target directory if needed ---
 if not exist "%TARGET_DIR%" (
     echo [INFO] Creating target directory: %TARGET_DIR%
@@ -53,7 +62,7 @@ if not exist "%TARGET_DIR%" (
 )
 
 :: --- Step 1: Copy the IDA plugin script ---
-echo [1/3] Copying ghidra_decompiler.py ...
+echo [1/4] Copying ghidra_decompiler.py ...
 copy /Y "%SRC_DIR%ida_plugin\ghidra_decompiler.py" "%TARGET_DIR%\ghidra_decompiler.py" >nul
 if errorlevel 1 (
     echo [ERROR] Failed to copy ghidra_decompiler.py
@@ -63,7 +72,7 @@ echo       OK
 
 :: --- Step 2: Copy the ghidra Python package ---
 set "GHIDRA_PKG_DST=%TARGET_DIR%\pyghidra"
-echo [2/3] Copying ghidra Python package to %GHIDRA_PKG_DST% ...
+echo [2/4] Copying ghidra Python package to %GHIDRA_PKG_DST% ...
 
 if exist "%GHIDRA_PKG_DST%" (
     echo       Removing old deployment ...
@@ -79,8 +88,27 @@ if errorlevel 8 (
 )
 echo       OK
 
-:: --- Step 3: Patch plugin to use deployed path ---
-echo [3/3] Patching plugin import path ...
+:: --- Step 3: Copy SLA spec files ---
+echo [3/4] Copying SLA specification files ...
+set "SPECS_DST=%GHIDRA_PKG_DST%\specs"
+if not exist "%SPECS_DST%" mkdir "%SPECS_DST%"
+
+set "_SLA_COUNT=0"
+if exist "%SRC_DIR%specs" (
+    for %%f in ("%SRC_DIR%specs\*.sla") do (
+        copy /Y "%%f" "%SPECS_DST%\" >nul 2>&1
+        set /a _SLA_COUNT+=1
+    )
+)
+if !_SLA_COUNT! EQU 0 (
+    echo [WARN] No .sla files found in %SRC_DIR%specs\
+    echo        The SLEIGH engine will not be able to disassemble without SLA files.
+) else (
+    echo       Copied !_SLA_COUNT! SLA files to %SPECS_DST%
+)
+
+:: --- Step 4: Patch plugin to use deployed path ---
+echo [4/4] Patching plugin import path ...
 
 set "DEPLOYED_PLUGIN=%TARGET_DIR%\ghidra_decompiler.py"
 python "%SRC_DIR%patch_path.py" "%DEPLOYED_PLUGIN%"
@@ -98,9 +126,11 @@ echo ========================================
 echo.
 echo   Plugin:   %TARGET_DIR%\ghidra_decompiler.py
 echo   Package:  %GHIDRA_PKG_DST%\ghidra\
+echo   Specs:    %SPECS_DST%\
 echo.
-echo   Note: Make sure SLA_PATH in ghidra_decompiler.py
-echo         points to your x86.sla file.
+echo   SLA files are auto-discovered from the specs/ directory.
+echo   To add custom SLA search paths, set PYGHIDRA_SLA_DIR or
+echo   call arch_map.add_sla_search_dir() in Python.
 echo.
 echo   Press Alt+F1 in IDA to decompile!
 echo ========================================
