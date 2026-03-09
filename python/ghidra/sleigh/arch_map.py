@@ -65,22 +65,27 @@ def _get_search_dirs() -> list:
     if env_dir and env_dir not in dirs:
         dirs.append(env_dir)
 
-    # Relative to this file: python/ghidra/sleigh -> project root
+    # Relative to this file: ghidra/sleigh/arch_map.py
     here = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.normpath(os.path.join(here, "..", "..", ".."))
+    # Source layout:   <root>/python/ghidra/sleigh/ -> 3 levels up = <root>
+    # Deployed layout: <dst>/ghidra/sleigh/         -> 2 levels up = <dst>
+    roots = [
+        os.path.normpath(os.path.join(here, "..", "..", "..")),  # source
+        os.path.normpath(os.path.join(here, "..", "..")),        # deployed
+    ]
 
-    # Scan Ghidra/Processors/<proc>/data/languages/ directories (standard Ghidra layout)
-    proc_dir = os.path.join(project_root, "Ghidra", "Processors")
-    if os.path.isdir(proc_dir):
-        for proc in os.listdir(proc_dir):
-            lang_dir = os.path.join(proc_dir, proc, "data", "languages")
-            if os.path.isdir(lang_dir) and lang_dir not in dirs:
-                dirs.append(lang_dir)
-
-    # Legacy flat specs/ directory
-    rel_specs = os.path.join(project_root, "specs")
-    if os.path.isdir(rel_specs) and rel_specs not in dirs:
-        dirs.append(rel_specs)
+    for root in roots:
+        # Scan Ghidra/Processors/<proc>/data/languages/ (standard Ghidra layout)
+        proc_dir = os.path.join(root, "Ghidra", "Processors")
+        if os.path.isdir(proc_dir):
+            for proc in os.listdir(proc_dir):
+                lang_dir = os.path.join(proc_dir, proc, "data", "languages")
+                if os.path.isdir(lang_dir) and lang_dir not in dirs:
+                    dirs.append(lang_dir)
+        # Legacy flat specs/ directory
+        rel_specs = os.path.join(root, "specs")
+        if os.path.isdir(rel_specs) and rel_specs not in dirs:
+            dirs.append(rel_specs)
 
     return dirs
 
