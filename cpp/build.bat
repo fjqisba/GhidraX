@@ -1,9 +1,8 @@
 @echo off
-chcp 65001 >nul 2>&1
 setlocal enabledelayedexpansion
 
 :: ============================================================
-::  Build sleigh_native.pyd  —  One-Click Build Script
+::  Build sleigh_native.pyd -- One-Click Build Script
 :: ============================================================
 ::
 ::  Prerequisites:
@@ -48,7 +47,7 @@ for %%E in (Community Professional Enterprise BuildTools) do (
         goto :found_vs
     )
 )
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\%VS_YEAR_%\BuildTools\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\%VS_YEAR_%\BuildTools\VC\Auxiliary\Build\ .bat" (
     set "_VCVARS=C:\Program Files (x86)\Microsoft Visual Studio\%VS_YEAR_%\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
     goto :found_vs
 )
@@ -210,7 +209,7 @@ goto :done
 :fail
 echo.
 echo ========================================
-echo   BUILD FAILED — see errors above
+echo   BUILD FAILED -- see errors above
 echo ========================================
 echo.
 pause
