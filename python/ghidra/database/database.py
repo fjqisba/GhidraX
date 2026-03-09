@@ -515,6 +515,249 @@ class Scope(ABC):
     def getOwner(self):
         return self.owner
 
+    def getRangeTree(self) -> RangeList:
+        return self.rangetree
+
+    # --- Query methods (virtual in C++) ---
+
+    def queryByName(self, name: str) -> Optional[Symbol]:
+        return self.findByName(name)
+
+    def queryByAddr(self, addr: Address, sz: int) -> Optional[Symbol]:
+        entry = self.findAddr(addr, Address())
+        return entry.getSymbol() if entry else None
+
+    def queryContainer(self, addr: Address, size: int, usepoint: Address) -> Optional[SymbolEntry]:
+        return self.findContainer(addr, size, usepoint)
+
+    def queryFunction(self, addr: Address) -> Optional[FunctionSymbol]:
+        return None
+
+    def queryExternalRefFunction(self, addr: Address) -> Optional[ExternRefSymbol]:
+        return None
+
+    def queryCodeLabel(self, addr: Address) -> Optional[LabSymbol]:
+        return None
+
+    def queryProperties(self, addr: Address, size: int, usepoint, flags_ref) -> None:
+        pass
+
+    # --- Symbol creation methods ---
+
+    def addFunction(self, addr: Address, name: str, size: int = 1) -> Optional[FunctionSymbol]:
+        return None
+
+    def addEquateSymbol(self, name: str, format_: int, val: int) -> Optional[EquateSymbol]:
+        return None
+
+    def addCodeLabel(self, addr: Address, name: str) -> Optional[LabSymbol]:
+        return None
+
+    def addDynamicSymbol(self, name: str, ct, addr: Address, hash_: int) -> Optional[Symbol]:
+        return None
+
+    def addExternalRef(self, addr: Address, refaddr: Address, name: str) -> Optional[ExternRefSymbol]:
+        return None
+
+    def addUnionFacetSymbol(self, name: str, ct, fieldNum: int) -> Optional[Symbol]:
+        return None
+
+    def addMapPoint(self, sym: Symbol, addr: Address, usepoint: Address) -> Optional[SymbolEntry]:
+        return None
+
+    def addMapSym(self, decoder) -> Optional[SymbolEntry]:
+        return None
+
+    # --- Symbol modification ---
+
+    def renameSymbol(self, sym: Symbol, newname: str) -> None:
+        sym.setName(newname)
+
+    def retypeSymbol(self, sym: Symbol, ct) -> None:
+        sym.setType(ct)
+
+    def setAttribute(self, sym: Symbol, attr: int) -> None:
+        sym.setFlags(attr)
+
+    def clearAttribute(self, sym: Symbol, attr: int) -> None:
+        sym.clearFlags(attr)
+
+    def setCategory(self, sym: Symbol, cat: int, ind: int) -> None:
+        sym.setCategory(cat, ind)
+
+    def setDisplayFormat(self, sym: Symbol, val: int) -> None:
+        sym.setDisplayFormat(val)
+
+    def setThisPointer(self, sym: Symbol, val: bool) -> None:
+        sym.setThisPointer(val)
+
+    def overrideSizeLockType(self, sym: Symbol, ct) -> None:
+        pass
+
+    def resetSizeLockType(self, sym: Symbol) -> None:
+        pass
+
+    def removeSymbolMappings(self, sym: Symbol) -> None:
+        sym.mapentry.clear()
+
+    # --- Scope query/search ---
+
+    def findOverlap(self, addr: Address, size: int) -> Optional[SymbolEntry]:
+        return None
+
+    def findClosestFit(self, addr: Address, size: int, usepoint: Address) -> Optional[SymbolEntry]:
+        return self.findContainer(addr, size, usepoint)
+
+    def findFunction(self, addr: Address) -> Optional[FunctionSymbol]:
+        return None
+
+    def findExternalRef(self, addr: Address) -> Optional[ExternRefSymbol]:
+        return None
+
+    def findCodeLabel(self, addr: Address) -> Optional[LabSymbol]:
+        return None
+
+    def findDistinguishingScope(self, sym: Symbol) -> Optional['Scope']:
+        return self
+
+    # --- Scope hierarchy ---
+
+    def isSubScope(self, other: 'Scope') -> bool:
+        cur = self
+        while cur is not None:
+            if cur is other:
+                return True
+            cur = cur.parent
+        return False
+
+    def discoverScope(self, addr: Address, sz: int, usepoint: Address) -> Optional['Scope']:
+        return self
+
+    def resolveScope(self, addr: Address) -> Optional['Scope']:
+        return self
+
+    def getFullName(self) -> str:
+        parts = []
+        cur = self
+        while cur is not None:
+            parts.append(cur.name)
+            cur = cur.parent
+        parts.reverse()
+        return "::".join(parts)
+
+    def getScopePath(self) -> List[str]:
+        parts = []
+        cur = self
+        while cur is not None:
+            parts.append(cur.name)
+            cur = cur.parent
+        parts.reverse()
+        return parts
+
+    # --- Iterators ---
+
+    def begin(self):
+        return iter([])
+
+    def end(self):
+        return None
+
+    def beginDynamic(self):
+        return iter([])
+
+    def endDynamic(self):
+        return None
+
+    def childrenBegin(self):
+        return iter(self.children.values())
+
+    def childrenEnd(self):
+        return None
+
+    # --- Scope-level operations ---
+
+    def clear(self) -> None:
+        pass
+
+    def clearUnlocked(self) -> None:
+        pass
+
+    def clearUnlockedCategory(self, cat: int) -> None:
+        pass
+
+    def clearCategory(self, cat: int) -> None:
+        pass
+
+    def adjustCaches(self) -> None:
+        pass
+
+    def getCategorySize(self, cat: int) -> int:
+        return 0
+
+    def getCategorySymbol(self, cat: int, index: int) -> Optional[Symbol]:
+        return None
+
+    # --- Encode / Decode ---
+
+    def encode(self, encoder) -> None:
+        pass
+
+    def decode(self, decoder) -> None:
+        pass
+
+    def encodeRecursive(self, encoder) -> None:
+        self.encode(encoder)
+        for child in self.children.values():
+            child.encodeRecursive(encoder)
+
+    def decodeWrappingAttributes(self, decoder) -> None:
+        pass
+
+    # --- Misc ---
+
+    def inScope(self, addr: Address, size: int, usepoint: Address) -> bool:
+        return self.findContainer(addr, size, usepoint) is not None
+
+    def inRange(self, addr: Address, size: int) -> bool:
+        return False
+
+    def isNameUsed(self, name: str, scope: Optional['Scope'] = None) -> bool:
+        return self.findByName(name) is not None
+
+    def isReadOnly(self) -> bool:
+        return False
+
+    def makeNameUnique(self, name: str) -> str:
+        if not self.isNameUsed(name):
+            return name
+        i = 1
+        while True:
+            candidate = f"{name}_{i}"
+            if not self.isNameUsed(candidate):
+                return candidate
+            i += 1
+
+    def buildDefaultName(self, sym: Symbol, base: int, addr: Address) -> str:
+        return f"DAT_{addr.getOffset():08x}"
+
+    def buildUndefinedName(self) -> str:
+        return "$$undef"
+
+    def buildVariableName(self, addr: Address, pc: Address, ct, index: int, flags: int) -> str:
+        return f"local_{addr.getOffset():x}"
+
+    def printBounds(self, s) -> None:
+        s.write(f"Scope {self.name}")
+
+    def printEntries(self, s) -> None:
+        pass
+
+    def turnOnDebug(self) -> None:
+        pass
+
+    def turnOffDebug(self) -> None:
+        pass
+
     def __repr__(self) -> str:
         return f"Scope({self.name!r}, id={self.uniqueId:#x})"
 
