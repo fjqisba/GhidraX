@@ -130,7 +130,13 @@ public:
                      uintb baseaddr,
                      uintb entry,
                      int4 funcsize) {
-        if (!initialized_) initialize();
+        try {
+            if (!initialized_) initialize();
+        } catch (LowlevelError &e) {
+            throw std::runtime_error(string("Init error: ") + e.explain);
+        } catch (std::exception &e) {
+            throw std::runtime_error(string("Init error: ") + e.what());
+        }
 
         errstream_.str("");
         errstream_.clear();
@@ -141,57 +147,60 @@ public:
         int4 imgsize = (int4)imgstr.size();
 
         // Build architecture
-        BufferArchitecture arch(slapath, target, baseaddr, &errstream_);
-        DocumentStorage store;
-        arch.init(store);
-        arch.setImageData(imgdata, imgsize);
-
-        // Create the action group and set it as current
-        arch.allacts.universalAction(&arch);
-        arch.allacts.resetDefaults();
-
-        // Find or create the function
-        Address funcEntry(arch.getDefaultCodeSpace(), entry);
-        Funcdata *fd = arch.symboltab->getGlobalScope()->findFunction(funcEntry);
-        if (fd == nullptr) {
-            string funcname = "func_" + to_string(entry);
-            arch.symboltab->getGlobalScope()->addFunction(funcEntry, funcname);
-            fd = arch.symboltab->getGlobalScope()->findFunction(funcEntry);
-            if (fd == nullptr) {
-                return "// ERROR: Could not create function at 0x" + to_string(entry);
-            }
-        }
-
-        // Run the decompiler action pipeline
-        int4 res;
         try {
+            BufferArchitecture arch(slapath, target, baseaddr, &errstream_);
+            DocumentStorage store;
+            arch.init(store);
+            arch.setImageData(imgdata, imgsize);
+
+            // Create the action group and set it as current
+            arch.allacts.universalAction(&arch);
+            arch.allacts.resetDefaults();
+
+            // Find or create the function
+            Address funcEntry(arch.getDefaultCodeSpace(), entry);
+            Funcdata *fd = arch.symboltab->getGlobalScope()->findFunction(funcEntry);
+            if (fd == nullptr) {
+                string funcname = "func_" + to_string(entry);
+                arch.symboltab->getGlobalScope()->addFunction(funcEntry, funcname);
+                fd = arch.symboltab->getGlobalScope()->findFunction(funcEntry);
+                if (fd == nullptr) {
+                    throw std::runtime_error("Could not create function at 0x" + to_string(entry));
+                }
+            }
+
+            // Run the decompiler action pipeline
             Action *act = arch.allacts.getCurrent();
             if (act == nullptr) {
-                return "// ERROR: No current action";
+                throw std::runtime_error("No current action set");
             }
             act->reset(*fd);
-            res = act->perform(*fd);
+            int4 res = act->perform(*fd);
             if (res < 0) {
-                return "// ERROR: Decompilation incomplete (breakpoint)";
+                throw std::runtime_error("Decompilation incomplete (breakpoint)");
             }
-        } catch (LowlevelError &e) {
-            return string("// ERROR: ") + e.explain;
-        } catch (std::exception &e) {
-            return string("// ERROR: ") + e.what();
-        }
 
-        // Print the result
-        ostringstream codestream;
-        arch.print->setOutputStream(&codestream);
-        try {
+            // Print the result
+            ostringstream codestream;
+            arch.print->setOutputStream(&codestream);
             arch.print->docFunction(fd);
-        } catch (LowlevelError &e) {
-            return string("// ERROR printing: ") + e.explain;
-        } catch (std::exception &e) {
-            return string("// ERROR printing: ") + e.what();
-        }
 
-        return codestream.str();
+            return codestream.str();
+        } catch (LowlevelError &e) {
+            throw std::runtime_error(string("Decompiler error: ") + e.explain +
+                                     "\nInternal log: " + errstream_.str());
+        } catch (DecoderError &e) {
+            throw std::runtime_error(string("Decoder error: ") + e.explain +
+                                     "\nInternal log: " + errstream_.str());
+        } catch (std::runtime_error &) {
+            throw;  // re-throw our own runtime_errors
+        } catch (std::exception &e) {
+            throw std::runtime_error(string("C++ exception: ") + e.what() +
+                                     "\nInternal log: " + errstream_.str());
+        } catch (...) {
+            throw std::runtime_error(string("Unknown C++ exception") +
+                                     "\nInternal log: " + errstream_.str());
+        }
     }
 
     string getErrors() const {

@@ -204,13 +204,24 @@ def _get_native_decompiler():
     """Get or create the singleton native decompiler instance."""
     global _native_decompiler
     if '_native_decompiler' not in globals() or _native_decompiler is None:
+        import ghidra.sleigh.decompiler_native as _dnmod
         from ghidra.sleigh.decompiler_native import DecompilerNative
         _native_decompiler = DecompilerNative()
-        # Add specs directory to search path
-        specs_dir = os.path.normpath(os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "specs"))
-        if os.path.isdir(specs_dir):
-            _native_decompiler.add_spec_path(specs_dir)
+        # Find specs directory relative to the native module's location
+        # decompiler_native.pyd is at <project>/python/ghidra/sleigh/
+        mod_dir = os.path.dirname(os.path.abspath(_dnmod.__file__))
+        candidates = [
+            os.path.normpath(os.path.join(mod_dir, "..", "..", "..", "specs")),
+            os.path.normpath(os.path.join(PYGHIDRA_PATH, "..", "specs")),
+            os.environ.get("PYGHIDRA_SPECS_DIR", ""),
+        ]
+        found_specs = False
+        for candidate in candidates:
+            if candidate and os.path.isdir(candidate):
+                _native_decompiler.add_spec_path(candidate)
+                found_specs = True
+        if not found_specs:
+            print(f"[{PLUGIN_NAME}] WARNING: specs directory not found. Searched: {candidates}")
         _native_decompiler.initialize()
     return _native_decompiler
 

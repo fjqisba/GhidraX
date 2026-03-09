@@ -88,23 +88,23 @@ if errorlevel 8 (
 )
 echo       OK
 
-:: --- Step 3: Copy SLA spec files ---
-echo [3/4] Copying SLA specification files ...
+:: --- Step 3: Copy spec files (sla + ldefs + pspec + cspec) ---
+echo [3/4] Copying specification files ...
 set "SPECS_DST=%GHIDRA_PKG_DST%\specs"
 if not exist "%SPECS_DST%" mkdir "%SPECS_DST%"
 
-set "_SLA_COUNT=0"
+set "_SPEC_COUNT=0"
 if exist "%SRC_DIR%specs" (
-    for %%f in ("%SRC_DIR%specs\*.sla") do (
+    for %%f in ("%SRC_DIR%specs\*.sla" "%SRC_DIR%specs\*.ldefs" "%SRC_DIR%specs\*.pspec" "%SRC_DIR%specs\*.cspec") do (
         copy /Y "%%f" "%SPECS_DST%\" >nul 2>&1
-        set /a _SLA_COUNT+=1
+        set /a _SPEC_COUNT+=1
     )
 )
-if !_SLA_COUNT! EQU 0 (
-    echo [WARN] No .sla files found in %SRC_DIR%specs\
-    echo        The SLEIGH engine will not be able to disassemble without SLA files.
+if !_SPEC_COUNT! EQU 0 (
+    echo [WARN] No spec files found in %SRC_DIR%specs\
+    echo        The decompiler needs .sla, .ldefs, .pspec, .cspec files.
 ) else (
-    echo       Copied !_SLA_COUNT! SLA files to %SPECS_DST%
+    echo       Copied !_SPEC_COUNT! spec files to %SPECS_DST%
 )
 
 :: --- Step 4: Patch plugin to use deployed path ---
