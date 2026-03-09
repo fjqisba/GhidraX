@@ -1224,6 +1224,95 @@ class FuncProto:
         if self.outparam and not self.outparam.isTypeLocked():
             self.outparam = None
 
+    def hasModel(self) -> bool:
+        """Does this prototype have a model."""
+        return self.model is not None
+
+    def hasMatchingModel(self, op2) -> bool:
+        """Does this use the given model."""
+        return self.model is op2
+
+    def setInternal(self, m, vt) -> None:
+        """Set internal backing storage for this."""
+        self.model = m
+        if vt is not None:
+            self.outparam = ProtoParameter(vt)
+
+    def setInputLock(self, val: bool) -> None:
+        """Toggle the data-type lock on input parameters."""
+        if val:
+            self.flags |= FuncProto.voidinputlock
+            for p in self.store:
+                if hasattr(p, 'setTypeLock'):
+                    p.setTypeLock(True)
+        else:
+            self.flags &= ~FuncProto.voidinputlock
+            for p in self.store:
+                if hasattr(p, 'setTypeLock'):
+                    p.setTypeLock(False)
+
+    def setOutputLock(self, val: bool) -> None:
+        """Toggle the data-type lock on the return value."""
+        if self.outparam is not None and hasattr(self.outparam, 'setTypeLock'):
+            self.outparam.setTypeLock(val)
+
+    def setParam(self, i: int, name: str, piece) -> None:
+        """Set parameter storage directly."""
+        while len(self.store) <= i:
+            self.store.append(ProtoParameter())
+        p = self.store[i]
+        if hasattr(p, '_name'):
+            p._name = name
+        if piece is not None and hasattr(piece, 'type'):
+            p._type = piece.type
+
+    def removeParam(self, i: int) -> None:
+        """Remove the i-th input parameter."""
+        if 0 <= i < len(self.store):
+            del self.store[i]
+
+    def effectBegin(self):
+        """Get iterator to front of EffectRecord list."""
+        if self.model is not None and hasattr(self.model, 'effectlist'):
+            return iter(self.model.effectlist)
+        return iter([])
+
+    def effectEnd(self):
+        """Get iterator end sentinel (use effectBegin as iterator)."""
+        return None
+
+    def trashBegin(self):
+        """Get iterator to front of likelytrash list."""
+        if self.model is not None and hasattr(self.model, 'likelytrash'):
+            return iter(self.model.likelytrash)
+        return iter([])
+
+    def trashEnd(self):
+        """Get iterator end sentinel (use trashBegin as iterator)."""
+        return None
+
+    def internalBegin(self):
+        """Get iterator to front of internalstorage list."""
+        if self.model is not None and hasattr(self.model, 'internalstorage'):
+            return iter(self.model.internalstorage)
+        return iter([])
+
+    def internalEnd(self):
+        """Get iterator end sentinel (use internalBegin as iterator)."""
+        return None
+
+    def getInjectUponEntry(self) -> int:
+        """Get any upon-entry injection id (or -1)."""
+        if self.model is not None and hasattr(self.model, 'getInjectUponEntry'):
+            return self.model.getInjectUponEntry()
+        return -1
+
+    def getInjectUponReturn(self) -> int:
+        """Get any upon-return injection id (or -1)."""
+        if self.model is not None and hasattr(self.model, 'getInjectUponReturn'):
+            return self.model.getInjectUponReturn()
+        return -1
+
     def copy(self, other):
         self.model = other.model
         self.store = list(other.store)
