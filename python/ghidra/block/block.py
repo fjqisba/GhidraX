@@ -1244,6 +1244,25 @@ class BlockBasic(FlowBlock):
     def getType(self) -> int: return FlowBlock.t_basic
     def subBlock(self, i: int): return None
     def getExitLeaf(self): return self
+    def addOp(self, op) -> None:
+        """Append a PcodeOp to this basic block."""
+        self._op.append(op)
+
+    def removeOp(self, op) -> None:
+        """Remove a PcodeOp from this basic block."""
+        try:
+            self._op.remove(op)
+        except ValueError:
+            pass
+
+    def insertOp(self, op, pos: int = 0) -> None:
+        """Insert a PcodeOp at a specific position."""
+        self._op.insert(pos, op)
+
+    def getOpList(self):
+        """Return the list of PcodeOps."""
+        return self._op
+
     def beginOp(self): return iter(self._op)
     def endOp(self): return None
     def emptyOp(self) -> bool: return len(self._op) == 0
