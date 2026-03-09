@@ -34,8 +34,16 @@ import ida_ua
 import idautils
 import idc
 
-# Add PyGhidra to path
-PYGHIDRA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "python")
+# Add PyGhidra to path (supports both source and deployed layout)
+_plugin_dir = os.path.dirname(os.path.abspath(__file__))
+_source_path = os.path.join(os.path.dirname(_plugin_dir), "python")
+_deploy_path = os.path.join(_plugin_dir, "pyghidra")
+if os.path.isdir(os.path.join(_deploy_path, "ghidra")):
+    PYGHIDRA_PATH = _deploy_path
+elif os.path.isdir(os.path.join(_source_path, "ghidra")):
+    PYGHIDRA_PATH = _source_path
+else:
+    PYGHIDRA_PATH = _deploy_path  # fallback
 if PYGHIDRA_PATH not in sys.path:
     sys.path.insert(0, PYGHIDRA_PATH)
 
