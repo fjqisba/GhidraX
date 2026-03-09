@@ -65,16 +65,22 @@ def _get_search_dirs() -> list:
     if env_dir and env_dir not in dirs:
         dirs.append(env_dir)
 
-    # Relative to this file: ../../../specs/  (python/ghidra/sleigh -> project root/specs)
+    # Relative to this file: python/ghidra/sleigh -> project root
     here = os.path.dirname(os.path.abspath(__file__))
-    rel_specs = os.path.normpath(os.path.join(here, "..", "..", "..", "specs"))
-    if rel_specs not in dirs:
-        dirs.append(rel_specs)
+    project_root = os.path.normpath(os.path.join(here, "..", "..", ".."))
 
-    # Also check ../../specs/ for deployed layout
-    rel_specs2 = os.path.normpath(os.path.join(here, "..", "..", "specs"))
-    if rel_specs2 not in dirs:
-        dirs.append(rel_specs2)
+    # Scan Ghidra/Processors/<proc>/data/languages/ directories (standard Ghidra layout)
+    proc_dir = os.path.join(project_root, "Ghidra", "Processors")
+    if os.path.isdir(proc_dir):
+        for proc in os.listdir(proc_dir):
+            lang_dir = os.path.join(proc_dir, proc, "data", "languages")
+            if os.path.isdir(lang_dir) and lang_dir not in dirs:
+                dirs.append(lang_dir)
+
+    # Legacy flat specs/ directory
+    rel_specs = os.path.join(project_root, "specs")
+    if os.path.isdir(rel_specs) and rel_specs not in dirs:
+        dirs.append(rel_specs)
 
     return dirs
 

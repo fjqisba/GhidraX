@@ -1,5 +1,4 @@
 @echo off
-chcp 65001 >nul 2>&1
 setlocal enabledelayedexpansion
 
 :: ============================================================
@@ -88,23 +87,19 @@ if errorlevel 8 (
 )
 echo       OK
 
-:: --- Step 3: Copy spec files (sla + ldefs + pspec + cspec) ---
-echo [3/4] Copying specification files ...
-set "SPECS_DST=%GHIDRA_PKG_DST%\specs"
-if not exist "%SPECS_DST%" mkdir "%SPECS_DST%"
-
-set "_SPEC_COUNT=0"
-if exist "%SRC_DIR%specs" (
-    for %%f in ("%SRC_DIR%specs\*.sla" "%SRC_DIR%specs\*.ldefs" "%SRC_DIR%specs\*.pspec" "%SRC_DIR%specs\*.cspec") do (
-        copy /Y "%%f" "%SPECS_DST%\" >nul 2>&1
-        set /a _SPEC_COUNT+=1
+:: --- Step 3: Copy Ghidra spec directory (standard layout) ---
+echo [3/4] Copying Ghidra specification files ...
+set "GHIDRA_SPECS_DST=%GHIDRA_PKG_DST%\Ghidra"
+if exist "%SRC_DIR%Ghidra" (
+    robocopy "%SRC_DIR%Ghidra" "%GHIDRA_SPECS_DST%" /E /NFL /NDL /NJH /NJS /NC /NS /NP >nul
+    if errorlevel 8 (
+        echo [ERROR] Failed to copy Ghidra specs
+        goto :error
     )
-)
-if !_SPEC_COUNT! EQU 0 (
-    echo [WARN] No spec files found in %SRC_DIR%specs\
-    echo        The decompiler needs .sla, .ldefs, .pspec, .cspec files.
+    echo       OK - copied to %GHIDRA_SPECS_DST%
 ) else (
-    echo       Copied !_SPEC_COUNT! spec files to %SPECS_DST%
+    echo [WARN] Ghidra/ directory not found in %SRC_DIR%
+    echo        The decompiler needs Ghidra/<proc>/data/languages/ spec files.
 )
 
 :: --- Step 4: Patch plugin to use deployed path ---

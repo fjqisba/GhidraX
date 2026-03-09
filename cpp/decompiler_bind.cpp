@@ -104,7 +104,8 @@ protected:
 // ---------------------------------------------------------------------------
 class DecompilerNative {
     bool initialized_;
-    vector<string> specpaths_;
+    vector<string> specpaths_;     // flat directories (direct addDir2Path)
+    vector<string> ghidraroots_;   // Ghidra-layout roots (scanForSleighDirectories)
     ostringstream errstream_;
 
 public:
@@ -114,13 +115,26 @@ public:
         specpaths_.push_back(path);
     }
 
+    void addGhidraRoot(const string &path) {
+        ghidraroots_.push_back(path);
+    }
+
     void initialize() {
         if (initialized_) return;
-        if (specpaths_.empty()) {
-            startDecompilerLibrary((const char *)nullptr);
-        } else {
-            startDecompilerLibrary(specpaths_);
-        }
+        // Initialize core decompiler subsystems
+        AttributeId::initialize();
+        ElementId::initialize();
+        CapabilityPoint::initializeAll();
+        ArchitectureCapability::sortCapabilities();
+
+        // Scan Ghidra-layout directories (Ghidra/<proc>/data/languages/)
+        for (const auto &root : ghidraroots_)
+            SleighArchitecture::scanForSleighDirectories(root);
+
+        // Add flat spec directories directly
+        for (const auto &p : specpaths_)
+            SleighArchitecture::specpaths.addDir2Path(p);
+
         initialized_ = true;
     }
 
@@ -217,7 +231,9 @@ PYBIND11_MODULE(decompiler_native, m) {
     py::class_<DecompilerNative>(m, "DecompilerNative")
         .def(py::init<>())
         .def("add_spec_path", &DecompilerNative::addSpecPath,
-             "Add a directory to search for .ldefs/.pspec/.cspec files")
+             "Add a flat directory containing .ldefs/.pspec/.cspec files")
+        .def("add_ghidra_root", &DecompilerNative::addGhidraRoot,
+             "Add a Ghidra-layout root (scans <root>/Ghidra/*/data/languages/)")
         .def("initialize", &DecompilerNative::initialize,
              "Initialize the decompiler library")
         .def("decompile", &DecompilerNative::decompile,

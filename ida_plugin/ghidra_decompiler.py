@@ -207,21 +207,26 @@ def _get_native_decompiler():
         import ghidra.sleigh.decompiler_native as _dnmod
         from ghidra.sleigh.decompiler_native import DecompilerNative
         _native_decompiler = DecompilerNative()
-        # Find specs directory relative to the native module's location
-        # decompiler_native.pyd is at <project>/python/ghidra/sleigh/
+        # Find Ghidra spec directory (standard layout: Ghidra/<proc>/data/languages/)
+        # decompiler_native.pyd is at <root>/python/ghidra/sleigh/
         mod_dir = os.path.dirname(os.path.abspath(_dnmod.__file__))
+        project_root = os.path.normpath(os.path.join(mod_dir, "..", "..", ".."))
         candidates = [
-            os.path.normpath(os.path.join(mod_dir, "..", "..", "..", "specs")),
-            os.path.normpath(os.path.join(PYGHIDRA_PATH, "..", "specs")),
-            os.environ.get("PYGHIDRA_SPECS_DIR", ""),
+            project_root,
+            os.path.normpath(os.path.join(PYGHIDRA_PATH, "..")),
+            os.environ.get("PYGHIDRA_GHIDRA_ROOT", ""),
         ]
-        found_specs = False
+        found = False
         for candidate in candidates:
-            if candidate and os.path.isdir(candidate):
-                _native_decompiler.add_spec_path(candidate)
-                found_specs = True
-        if not found_specs:
-            print(f"[{PLUGIN_NAME}] WARNING: specs directory not found. Searched: {candidates}")
+            if not candidate:
+                continue
+            ghidra_dir = os.path.join(candidate, "Ghidra")
+            if os.path.isdir(ghidra_dir):
+                _native_decompiler.add_ghidra_root(candidate)
+                found = True
+                break
+        if not found:
+            print(f"[{PLUGIN_NAME}] WARNING: Ghidra/ spec directory not found. Searched: {candidates}")
         _native_decompiler.initialize()
     return _native_decompiler
 
