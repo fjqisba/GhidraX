@@ -144,12 +144,15 @@ set "_PYBIND11_DIR="
 if defined PYBIND11_DIR (
     set "_PYBIND11_DIR=%PYBIND11_DIR%"
 ) else (
-    for /f "delims=" %%d in ('"!_PYTHON!" -c "import pybind11; print(pybind11.get_cmake_dir())" 2^>nul') do (
-        set "_PYBIND11_DIR=%%d"
-    )
+    :: Write a helper script to avoid batch quoting hell
+    > "%TEMP%\_pb11.py" echo import pybind11; print(pybind11.get_cmake_dir())
+    > "%TEMP%\_pb11.txt" "!_PYTHON!" "%TEMP%\_pb11.py" 2>nul
+    set /p _PYBIND11_DIR=<"%TEMP%\_pb11.txt"
+    del "%TEMP%\_pb11.py" 2>nul
+    del "%TEMP%\_pb11.txt" 2>nul
 )
 if "!_PYBIND11_DIR!"=="" (
-    echo [ERROR] pybind11 not found. Run: pip install pybind11
+    echo [ERROR] pybind11 not found. Run: "!_PYTHON!" -m pip install pybind11
     goto :fail
 )
 echo        pybind11: !_PYBIND11_DIR!
