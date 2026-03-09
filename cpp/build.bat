@@ -110,12 +110,30 @@ set "_PYTHON="
 if defined PYTHON_EXE (
     set "_PYTHON=%PYTHON_EXE%"
 ) else (
-    where python.exe >nul 2>&1
-    if not errorlevel 1 (
-        for /f "delims=" %%i in ('where python.exe') do set "_PYTHON=%%i"
+    :: Find python but skip WindowsApps stub
+    for /f "delims=" %%i in ('where python.exe 2^>nul') do (
+        echo %%i | findstr /i "WindowsApps" >nul
+        if errorlevel 1 (
+            if "!_PYTHON!"=="" set "_PYTHON=%%i"
+        )
     )
 )
-if "%_PYTHON%"=="" (
+:: Try common locations if not found
+if "!_PYTHON!"=="" (
+    for %%P in (
+        "D:\MyLib\Python314\python.exe"
+        "C:\Python314\python.exe"
+        "C:\Python313\python.exe"
+        "C:\Python312\python.exe"
+        "C:\Python311\python.exe"
+        "C:\Python310\python.exe"
+    ) do (
+        if exist "%%~P" (
+            if "!_PYTHON!"=="" set "_PYTHON=%%~P"
+        )
+    )
+)
+if "!_PYTHON!"=="" (
     echo [ERROR] Python not found. Set PYTHON_EXE or add python to PATH.
     goto :fail
 )
