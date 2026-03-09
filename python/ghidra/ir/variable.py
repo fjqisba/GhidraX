@@ -380,6 +380,10 @@ class HighVariable:
 
     # --- Internal update methods ---
 
+    def updateFlags(self) -> None:
+        """Public alias for flag update (matches C++ public method)."""
+        self._updateFlags()
+
     def _updateFlags(self) -> None:
         if (self._highflags & HighVariable.flagsdirty) == 0:
             return

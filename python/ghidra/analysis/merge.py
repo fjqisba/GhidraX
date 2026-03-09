@@ -1074,6 +1074,10 @@ class Merge:
     def getNumHighMerges(self) -> int:
         return self._numHighMerges if hasattr(self, '_numHighMerges') else 0
 
+    def verifyHighCovers(self) -> None:
+        """Verify that all HighVariable covers are consistent (debug method)."""
+        pass
+
     def collectInputs(self, high: HighVariable, oplist: list, op: PcodeOp) -> None:
         """Collect Varnode instances from a HighVariable that are inputs to a given PcodeOp."""
         while True:

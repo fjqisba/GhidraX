@@ -323,6 +323,100 @@ class Cover:
             if uind > stop_ind:
                 cb.setEnd(ref)
 
+    def containVarnodeDef(self, vn) -> int:
+        """Check the definition of a Varnode for containment.
+
+        Returns:
+          0 = cover does not contain varnode definition
+          1 = contained in interior
+          2 = defining points intersect
+          3 = Cover's tail is the varnode definition
+        """
+        op = vn.getDef()
+        if op is None:
+            blk = 0
+        else:
+            parent = op.getParent()
+            if parent is None:
+                return 0
+            blk = parent.getIndex()
+        cb = self._cover.get(blk)
+        if cb is None:
+            return 0
+        if op is None:
+            # Input varnode — check if block 0 is covered from beginning
+            if not cb.empty():
+                return 1
+            return 0
+        if cb.contain(op):
+            boundtype = cb.boundary(op)
+            if boundtype == 0:
+                return 1
+            if boundtype == 2:
+                return 2
+            return 3
+        return 0
+
+    def intersectList(self, op2: Cover, level: int) -> List[int]:
+        """Get list of block indices where intersection exceeds a level.
+
+        Args:
+            op2: the other Cover
+            level: characterization threshold which must be exceeded
+        Returns:
+            list of intersecting block indices
+        """
+        listout: List[int] = []
+        keys1 = sorted(self._cover.keys())
+        keys2 = sorted(op2._cover.keys())
+        i = 0
+        j = 0
+        while i < len(keys1) and j < len(keys2):
+            if keys1[i] < keys2[j]:
+                i += 1
+            elif keys1[i] > keys2[j]:
+                j += 1
+            else:
+                val = self._cover[keys1[i]].intersect(op2._cover[keys2[j]])
+                if val >= level:
+                    listout.append(keys1[i])
+                i += 1
+                j += 1
+        return listout
+
+    def print(self, s) -> None:
+        """Dump a description of this cover to stream."""
+        for blk in sorted(self._cover.keys()):
+            cb = self._cover[blk]
+            s.write(f"{blk}: ")
+            if cb.empty():
+                s.write("empty")
+            else:
+                start_idx = CoverBlock.getUIndex(cb.start)
+                stop_idx = CoverBlock.getUIndex(cb.stop)
+                if start_idx == 0:
+                    s.write("begin")
+                elif start_idx == 0xFFFFFFFF:
+                    s.write("end")
+                else:
+                    s.write(str(cb.start.getSeqNum()))
+                s.write('-')
+                if stop_idx == 0:
+                    s.write("begin")
+                elif stop_idx == 0xFFFFFFFF:
+                    s.write("end")
+                else:
+                    s.write(str(cb.stop.getSeqNum()))
+            s.write('\n')
+
+    def begin(self):
+        """Get beginning iterator of CoverBlocks (sorted by block index)."""
+        return iter(sorted(self._cover.items()))
+
+    def end(self):
+        """Get end sentinel (for compatibility; use begin() as iterator)."""
+        return None
+
     def getNumBlocks(self) -> int:
         return len(self._cover)
 
