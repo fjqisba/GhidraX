@@ -174,12 +174,14 @@ class Action(ABC):
         A successive call to perform() will 'continue' from the break point.
         """
         while True:
+            # C++ switch with fall-through: start -> breakstarthit/repeat -> mid
             if self._status == Action.status_start:
                 self._count = 0
                 if self.checkStartBreak():
                     self._status = Action.status_breakstarthit
                     return -1
                 self._count_tests += 1
+                # fall through to breakstarthit/repeat
                 self._lcount = self._count
                 res = self.apply(data)
             elif self._status in (Action.status_breakstarthit, Action.status_repeat):
@@ -190,19 +192,22 @@ class Action(ABC):
             elif self._status == Action.status_end:
                 return 0
             elif self._status == Action.status_actionbreak:
-                res = 0  # Do not reapply
+                # C++: just break out of switch, skip result checking
+                pass
             else:
-                res = 0
+                break
 
-            if res < 0:
-                self._status = Action.status_mid
-                return res
-            elif self._lcount < self._count:
-                self.issueWarning(data.getArch())
-                self._count_apply += 1
-                if self.checkActionBreak():
-                    self._status = Action.status_actionbreak
-                    return -1
+            # Only check results if we actually called apply()
+            if self._status != Action.status_actionbreak:
+                if res < 0:
+                    self._status = Action.status_mid
+                    return res
+                elif self._lcount < self._count:
+                    self.issueWarning(data.getArch())
+                    self._count_apply += 1
+                    if self.checkActionBreak():
+                        self._status = Action.status_actionbreak
+                        return -1
 
             self._status = Action.status_repeat
             if not (self._lcount < self._count and (self._flags & Action.rule_repeatapply) != 0):
@@ -724,9 +729,11 @@ class ActionPool(Action):
     def _processOp(self, op: PcodeOp, data: Funcdata) -> int:
         """Apply the next possible Rule to a PcodeOp.
 
+        The PcodeOp iterator is advanced internally.
         Returns 0 if no breakpoint, -1 otherwise.
         """
         if op.isDead():
+            self._op_state_idx += 1
             data.opDeadAndGone(op)
             self._rule_index = 0
             return 0
@@ -756,10 +763,14 @@ class ActionPool(Action):
             else:
                 new_opc = int(op.code())
                 if opc != new_opc:
+                    data.getArch().printMessage(
+                        "ERROR: Rule " + rl.getName() +
+                        " changed op without returning result of 1!")
                     opc = new_opc
                     rules = self._perop.get(opc, [])
                     self._rule_index = 0
 
+        self._op_state_idx += 1
         self._rule_index = 0
         return 0
 
@@ -772,7 +783,6 @@ class ActionPool(Action):
 
         while self._op_state_idx < len(self._op_state_list):
             op = self._op_state_list[self._op_state_idx]
-            self._op_state_idx += 1
             if self._processOp(op, data) != 0:
                 return -1
 
